@@ -8,18 +8,16 @@
 		<languageKey index="default" type="array">
 			<label index="tt_content.CType_pi1">Display Controller (cached)</label>
 			<label index="tt_content.CType_pi2">Display Controller (not cached)</label>
-			<label index="tt_content.tx_displaycontroller_model">Data Source Type</label>
-			<label index="tt_content.tx_displaycontroller_view">Data Display Type</label>
-			<label index="tt_content.tx_displaycontroller_dataquery">SQL Data Query</label>
-			<label index="tt_content.tx_displaycontroller_focus">Focus Selector</label>
+			<label index="tabs.dataobjects">Data Objects</label>
+			<label index="tt_content.tx_displaycontroller_provider">Data Provider(s)</label>
+			<label index="tt_content.tx_displaycontroller_consumer">Data Consumer</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="tt_content.CType_pi1">Contrôleur d'affichage (avec cache)</label>
 			<label index="tt_content.CType_pi2">Contrôleur d'affichage (hors cache)</label>
-			<label index="tt_content.tx_displaycontroller_model">Type de source de données</label>
-			<label index="tt_content.tx_displaycontroller_view">Type d'affichage des données</label>
-			<label index="tt_content.tx_displaycontroller_dataquery">Requête SQL</label>
-			<label index="tt_content.tx_displaycontroller_focus">Sélecteur Focus</label>
+			<label index="tabs.dataobjects">Données</label>
+			<label index="tt_content.tx_displaycontroller_provider">Source(s) de données</label>
+			<label index="tt_content.tx_displaycontroller_consumer">Consommateur de données</label>
 		</languageKey>
 	</data>
 </T3locallang>
