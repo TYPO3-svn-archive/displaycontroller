@@ -18,6 +18,8 @@ $tempColumns = array(
 			'size' => 2,	
 			'minitems' => 1,
 			'maxitems' => 2,
+			'prepend_tname' => 1,
+			'MM' => 'tx_displaycontroller_providers_mm',
 		)
 	),
 	'tx_displaycontroller_consumer' => array(		
@@ -30,6 +32,8 @@ $tempColumns = array(
 			'size' => 1,	
 			'minitems' => 1,
 			'maxitems' => 1,
+			'prepend_tname' => 1,
+			'MM' => 'tx_displaycontroller_consumers_mm',
 		)
 	),
 );

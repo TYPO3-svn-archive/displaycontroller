@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2008 Francois Suter (Cobweb) <support@cobweb.ch>
+*  (c) 2008 Francois Suter (Cobweb) <typo3@cobweb.ch>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -33,7 +33,7 @@ require_once(t3lib_extMgm::extPath('displaycontroller', 'class.tx_displaycontrol
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
  *
- * @author	Francois Suter (Cobweb) <support@cobweb.ch>
+ * @author	Francois Suter (Cobweb) <typo3@cobweb.ch>
  * @package	TYPO3
  * @subpackage	tx_displaycontroller
  */

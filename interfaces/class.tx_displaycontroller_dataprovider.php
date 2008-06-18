@@ -21,31 +21,36 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- * Hint: use extdeveval to insert/update function index above.
- */
-
-require_once(t3lib_extMgm::extPath('displaycontroller', 'class.tx_displaycontroller.php'));
-
 
 /**
- * Plugin 'Display Controller (not cached)' for the 'displaycontroller' extension.
+ * Interface for objects that can behave as Data Providers
  *
  * @author	Francois Suter (Cobweb) <typo3@cobweb.ch>
  * @package	TYPO3
  * @subpackage	tx_displaycontroller
  */
-class tx_displaycontroller_pi2 extends tx_displaycontroller {
-	public $prefixId		= 'tx_displaycontroller_pi2';		// Same as class name
-	public $scriptRelPath	= 'pi2/class.tx_displaycontroller_pi2.php';	// Path to this script relative to the extension dir.
+interface tx_displaycontroller_dataprovider {
+	
+	/**
+	 * This method returns the list of data structure types that the Data Provider can prepare
+	 *
+	 * @return	array	list of provided data structures
+	 */
+	public function getProvidedDataStructures();
+
+	/**
+	 * This method indicates whether the Data Provider can create the type of data structure requested or not
+	 *
+	 * @param	string		$type: type of data structure
+	 * @return	boolean		true if it can handle the requested type, false otherwise
+	 */
+	public function providesDataStructure($type);
+
+	/**
+	 * This method returns the prepared data structure
+	 *
+	 * @return	array	standardised data structure
+	 */
+	public function getDataStructure();
 }
-
-
-
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/displaycontroller/pi2/class.tx_displaycontroller_pi2.php'])	{
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/displaycontroller/pi2/class.tx_displaycontroller_pi2.php']);
-}
-
 ?>

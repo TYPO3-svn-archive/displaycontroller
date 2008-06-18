@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2008 Francois Suter (Cobweb) <support@cobweb.ch>
+*  (c) 2008 Francois Suter (Cobweb) <typo3@cobweb.ch>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -33,7 +33,7 @@ require_once(PATH_tslib.'class.tslib_pibase.php');
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
  *
- * @author	Francois Suter (Cobweb) <support@cobweb.ch>
+ * @author	Francois Suter (Cobweb) <typo3@cobweb.ch>
  * @package	TYPO3
  * @subpackage	tx_displaycontroller
  */
@@ -49,9 +49,9 @@ class tx_displaycontroller extends tslib_pibase {
 	 * @return	The content that is displayed on the website
 	 */
 	function main($content, $conf)	{
-		return 'Hello World!<HR>
-			Here is the TypoScript passed to the method:'.
-					t3lib_div::view_array($conf);
+		$content = t3lib_div::view_array($conf);
+		$content .= t3lib_div::view_array($this->cObj->data);
+		return $content;
 	}
 }
 
