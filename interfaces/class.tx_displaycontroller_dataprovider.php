@@ -32,11 +32,11 @@
 interface tx_displaycontroller_dataprovider {
 	
 	/**
-	 * This method returns the list of data structure types that the Data Provider can prepare
+	 * This method returns the type of data structure that the Data Provider can prepare
 	 *
-	 * @return	array	list of provided data structures
+	 * @return	string	type of the provided data structure
 	 */
-	public function getProvidedDataStructures();
+	public function getProvidedDataStructure();
 
 	/**
 	 * This method indicates whether the Data Provider can create the type of data structure requested or not
@@ -47,7 +47,7 @@ interface tx_displaycontroller_dataprovider {
 	public function providesDataStructure($type);
 
 	/**
-	 * This method returns the prepared data structure
+	 * This method assembles the data structure and returns it
 	 *
 	 * @return	array	standardised data structure
 	 */

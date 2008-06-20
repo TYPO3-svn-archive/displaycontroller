@@ -32,11 +32,11 @@
 interface tx_displaycontroller_dataconsumer {
 	
 	/**
-	 * This method returns the list of data structure types that the Data Consumer can use
+	 * This method returns the type of data structure that the Data Consumer can use
 	 *
-	 * @return	array	list of provided data structures
+	 * @return	string	type of used data structures
 	 */
-	public function getAcceptedDataStructures();
+	public function getAcceptedDataStructure();
 
 	/**
 	 * This method indicates whether the Data Consumer can use the type of data structure requested or not
@@ -53,5 +53,19 @@ interface tx_displaycontroller_dataconsumer {
 	 * @return	void
 	 */
 	public function setDataStructure($structure);
+
+	/**
+	 * This method starts whatever rendering process the Data Consumer is programmed to do
+	 *
+	 * @return	void
+	 */
+	public function startProcess();
+
+	/**
+	 * This method returns the result of the work done by the Data Consumer (FE output or whatever else)
+	 *
+	 * @return	mixed	the result of the Data Consumer's work
+	 */
+	public function getResult();
 }
 ?>
