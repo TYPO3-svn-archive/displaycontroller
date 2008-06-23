@@ -41,6 +41,7 @@ class tx_displaycontroller extends tslib_pibase {
 	public $prefixId	= 'tx_displaycontroller';		// Same as class name
 	public $extKey		= 'displaycontroller';	// The extension key.
 	protected $controller; // Contains a reference to a controller object
+	protected static $consumer; // Contains a reference to the Data Consumer object
 
 	/**
 	 * This method performs various initialisations
@@ -54,6 +55,8 @@ class tx_displaycontroller extends tslib_pibase {
 
 	/**
 	 * The main method of the plugin
+	 * This method uses a controller object to find the appropriate Data Provider
+	 * The data structure from the Data Provider is then passed to the appropriate Data Consumer for rendering
 	 *
 	 * @param	string		$content: the plugin's content
 	 * @param	array		$conf: the plugin's TS configuration
@@ -77,18 +80,49 @@ class tx_displaycontroller extends tslib_pibase {
 		}
 			// Get the actual data provider
 		$provider = $this->controller->getDataProvider($availableProviders);
-//t3lib_div::debug($provider);
-$content = t3lib_div::view_array($provider->getDataStructure());
-		// Get the data consumer
-		// Get the data structure from the provider
+
+			// Get the data consumer
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_consumers_mm', "uid_local = '".$this->cObj->data['uid']."'");
+		if ($res) {
+			$availableConsumer = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+			self::$consumer = $this->controller->getDataConsumer($availableConsumer);
+				// Check if provided data structure is compatible with Data Consumer
+			if (self::$consumer->acceptsDataStructure($provider->getProvidedDataStructure())) {
+					// Pass the data structure, load the TypoScript and get the rendered data
+				self::$consumer->setDataStructure($provider->getDataStructure());
+				self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->tsKey.'.']);
+				self::$consumer->startProcess();
+				$content = self::$consumer->getResult();
+			}
+			else {
+				// Issue error if data structures are not compatible between provider and consumer
+			}
+		}
+		else {
+			// An error occurred querying the database
+		}
 		// Load the data structure into the consumer
 		// Get the rendered data
+		return $content;
+	}
+
+	/**
+	 * This method can be called instead of main() for rendering nested elements of a data structure
+	 * It avoids the full initialisation by refering to the consumer stored in a static variable
+	 *
+	 * @param	string		$content: the plugin's content
+	 * @param	array		$conf: limited TS configuration for the rendering of the nested element
+	 * @return	string		The content to display on the website
+	 */
+	function sub($content, $conf) {
+		self::$consumer->setTypoScript($conf);
+		$content = self::$consumer->getSubResult();
 		return $content;
 	}
 }
 
 
-
+   
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/displaycontroller/class.tx_displaycontroller.php'])	{
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/displaycontroller/class.tx_displaycontroller.php']);
 }
