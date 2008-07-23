@@ -10,6 +10,6 @@ t3lib_extMgm::addPItoST43($_EXTKEY, 'pi2/class.tx_displaycontroller_pi2.php', '_
 
 // Initialise known list of consumer and providers (if not yet done (might be if extensions were not loaded in proper order))
 
-if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['displaycontroller']['providers'])) $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['displaycontroller']['providers'] = array();
-if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['displaycontroller']['consumers'])) $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['displaycontroller']['consumers'] = array();
+if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$_EXTKEY]['providers'])) $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$_EXTKEY]['providers'] = array();
+if (!isset($GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$_EXTKEY]['consumers'])) $GLOBALS['TYPO3_CONF_VARS']['EXTCONF'][$_EXTKEY]['consumers'] = array();
 ?>
