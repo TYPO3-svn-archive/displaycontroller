@@ -65,7 +65,7 @@ class tx_displaycontroller_service extends tx_basecontroller_base {
         }
 		else {
 			$provider = t3lib_div::makeInstanceService('dataprovider', $rows[0]['tablenames']);
-			$provider->loadProviderData($rows[0]['uid_foreign']);
+			$provider->loadProviderData(array('table' => $rows[0]['tablenames'], 'uid' => $rows[0]['uid_foreign']));
 			return $provider;
         }
     }
