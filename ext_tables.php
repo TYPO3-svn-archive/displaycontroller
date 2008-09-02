@@ -45,11 +45,13 @@ $tempColumns = array(
 			'MM' => 'tx_displaycontroller_consumers_mm',
 			'wizards' => array(
 				'edit' => array(
-					'type' => 'popup',
+//					'type' => 'popup',
+					'type' => 'script',
 					'title' => 'LLL:EXT:displaycontroller/locallang_db.xml:wizards.edit_dataprovider',
 					'script' => 'wizard_edit.php',
 					'icon' => 'edit2.gif',
-					'popup_onlyOpenIfSelected' => 1
+					'popup_onlyOpenIfSelected' => 1,
+					'notNewRecords' => 1
 				),
 			)
 		)
