@@ -26,7 +26,9 @@ $tempColumns = array(
 					'title' => 'LLL:EXT:displaycontroller/locallang_db.xml:wizards.edit_dataprovider',
 					'script' => 'wizard_edit.php',
 					'icon' => 'edit2.gif',
-					'popup_onlyOpenIfSelected' => 1
+					'popup_onlyOpenIfSelected' => 1,
+					'notNewRecords' => 1,
+					'JSopenParams' => 'height=400,width=600,status=0,menubar=0,scrollbars=1'
 				),
 			)
 		)
@@ -45,13 +47,13 @@ $tempColumns = array(
 			'MM' => 'tx_displaycontroller_consumers_mm',
 			'wizards' => array(
 				'edit' => array(
-//					'type' => 'popup',
-					'type' => 'script',
-					'title' => 'LLL:EXT:displaycontroller/locallang_db.xml:wizards.edit_dataprovider',
+					'type' => 'popup',
+					'title' => 'LLL:EXT:displaycontroller/locallang_db.xml:wizards.edit_dataconsumer',
 					'script' => 'wizard_edit.php',
 					'icon' => 'edit2.gif',
 					'popup_onlyOpenIfSelected' => 1,
-					'notNewRecords' => 1
+					'notNewRecords' => 1,
+					'JSopenParams' => 'height=400,width=600,status=0,menubar=0,scrollbars=1'
 				),
 			)
 		)
