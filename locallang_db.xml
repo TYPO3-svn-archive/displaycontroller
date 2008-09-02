@@ -11,6 +11,8 @@
 			<label index="tabs.dataobjects">Data Objects</label>
 			<label index="tt_content.tx_displaycontroller_provider">Data Provider(s)</label>
 			<label index="tt_content.tx_displaycontroller_consumer">Data Consumer</label>
+			<label index="wizards.edit_dataprovider">Edit Data Provider</label>
+			<label index="wizards.edit_dataconsumer">Edit Data Consumer</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="tt_content.CType_pi1">Contrôleur d'affichage (avec cache)</label>
@@ -18,6 +20,8 @@
 			<label index="tabs.dataobjects">Données</label>
 			<label index="tt_content.tx_displaycontroller_provider">Source(s) de données</label>
 			<label index="tt_content.tx_displaycontroller_consumer">Consommateur de données</label>
+			<label index="wizards.edit_dataprovider">Editer la source de données</label>
+			<label index="wizards.edit_dataconsumer">Editer le consommateur de données</label>
 		</languageKey>
 	</data>
 </T3locallang>

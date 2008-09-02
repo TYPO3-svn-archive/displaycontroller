@@ -20,6 +20,15 @@ $tempColumns = array(
 			'maxitems' => 2,
 			'prepend_tname' => 1,
 			'MM' => 'tx_displaycontroller_providers_mm',
+			'wizards' => array(
+				'edit' => array(
+					'type' => 'popup',
+					'title' => 'LLL:EXT:displaycontroller/locallang_db.xml:wizards.edit_dataprovider',
+					'script' => 'wizard_edit.php',
+					'icon' => 'edit2.gif',
+					'popup_onlyOpenIfSelected' => 1
+				),
+			)
 		)
 	),
 	'tx_displaycontroller_consumer' => array(		
@@ -34,6 +43,15 @@ $tempColumns = array(
 			'maxitems' => 1,
 			'prepend_tname' => 1,
 			'MM' => 'tx_displaycontroller_consumers_mm',
+			'wizards' => array(
+				'edit' => array(
+					'type' => 'popup',
+					'title' => 'LLL:EXT:displaycontroller/locallang_db.xml:wizards.edit_dataprovider',
+					'script' => 'wizard_edit.php',
+					'icon' => 'edit2.gif',
+					'popup_onlyOpenIfSelected' => 1
+				),
+			)
 		)
 	),
 );
