@@ -69,7 +69,10 @@ class tx_displaycontroller extends tslib_pibase {
 //		$content .= t3lib_div::view_array($this->cObj->data);
 		$this->init($conf);
 
-			// Get the list of referenced data providers
+		// Define the filter (if any)
+		$filter = $this->defineFilter();
+
+		// Get the list of referenced data providers
 		$availableProviders = array();
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_providers_mm', "uid_local = '".$this->cObj->data['uid']."'", '', 'sorting ASC');
 		if ($res) {
@@ -80,10 +83,11 @@ class tx_displaycontroller extends tslib_pibase {
 		else {
 			// An error occurred querying the database
 		}
-			// Get the actual data provider
+		// Get the actual data provider
 		$provider = $this->controller->getDataProvider($availableProviders);
+		$provider->setDataFilter($filter);
 
-			// Get the data consumer
+		// Get the data consumer
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_consumers_mm', "uid_local = '".$this->cObj->data['uid']."'");
 		if ($res) {
 			$availableConsumer = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
@@ -109,6 +113,39 @@ class tx_displaycontroller extends tslib_pibase {
 	}
 
 	/**
+	 * This method defines the Data Filter to use depending on the values stored in the database record
+	 * It returns the Data Filter structure
+	 *
+	 * @return	array	Data Filter structure
+	 */
+	protected function defineFilter() {
+		$filter = array();
+		if (!empty($this->cObj->data['filtertype'])) {
+			switch ($this->cObj->data['filtertype']) {
+				case 'single':
+					$filter['filters'] = array(
+											'0' => array(
+												'table' => $this->piVars['table'],
+												'field' => 'uid',
+												'conditions' => array(
+													0 => array(
+														'operator' => 'eq',
+														'value' => $this->piVars['showUid'],
+													)
+												)
+											)
+										);
+					break;
+				case 'list':
+					break;
+				case 'filter':
+					break;
+			}
+		}
+		return $filter;
+	}
+
+	/**
 	 * This method can be called instead of main() for rendering nested elements of a data structure
 	 * It avoids the full initialisation by refering to the consumer stored in a static variable
 	 *
@@ -116,7 +153,7 @@ class tx_displaycontroller extends tslib_pibase {
 	 * @param	array		$conf: limited TS configuration for the rendering of the nested element
 	 * @return	string		The content to display on the website
 	 */
-	function sub($content, $conf) {
+	public function sub($content, $conf) {
 		self::$consumer->setTypoScript($conf);
 		$content = self::$consumer->getSubResult();
 		return $content;
