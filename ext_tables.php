@@ -8,6 +8,43 @@ t3lib_div::loadTCA('tt_content');
 // Add new columns to tt_content
 
 $tempColumns = array(
+	'tx_displaycontroller_filtertype' => array (		
+		'exclude' => 1,		
+		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_filtertype',		
+		'config' => array (
+			'type' => 'radio',
+			'items' => array (
+				array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_filtertype.I.0', 'detail'),
+				array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_filtertype.I.1', 'list'),
+				array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_filtertype.I.2', 'filter'),
+			),
+		)
+	),
+	'tx_displaycontroller_datafilter' => array (		
+		'exclude' => 0,		
+		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_datafilter',		
+		'config' => array (
+			'type' => 'group',	
+			'internal_type' => 'db',	
+			'allowed' => '',	
+			'size' => 1,	
+			'minitems' => 0,
+			'maxitems' => 1,
+			'prepend_tname' => 1,
+			'MM' => 'tx_displaycontroller_filters_mm',
+			'wizards' => array(
+				'edit' => array(
+					'type' => 'popup',
+					'title' => 'LLL:EXT:displaycontroller/locallang_db.xml:wizards.edit_datafilter',
+					'script' => 'wizard_edit.php',
+					'icon' => 'edit2.gif',
+					'popup_onlyOpenIfSelected' => 1,
+					'notNewRecords' => 1,
+					'JSopenParams' => 'height=400,width=600,status=0,menubar=0,scrollbars=1'
+				),
+			)
+		)
+	),
 	'tx_displaycontroller_provider' => array(		
 		'exclude' => 0,		
 		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_provider',		
@@ -64,7 +101,7 @@ t3lib_extMgm::addTCAcolumns('tt_content', $tempColumns, 1);
 // Define showitem property for both plug-ins
 
 $showItem = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2,linkToTop;;;;3-3-3';
-$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_provider, tx_displaycontroller_consumer';
+$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_provider, tx_displaycontroller_consumer';
 $showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime';
 
 $TCA['tt_content']['types'][$_EXTKEY.'_pi1']['showitem'] = $showItem;
