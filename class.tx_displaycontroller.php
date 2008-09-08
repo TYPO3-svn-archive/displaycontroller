@@ -120,8 +120,8 @@ class tx_displaycontroller extends tslib_pibase {
 	 */
 	protected function defineFilter() {
 		$filter = array();
-		if (!empty($this->cObj->data['filtertype'])) {
-			switch ($this->cObj->data['filtertype']) {
+		if (!empty($this->cObj->data['tx_displaycontroller_filtertype'])) {
+			switch ($this->cObj->data['tx_displaycontroller_filtertype']) {
 				case 'single':
 					$filter['filters'] = array(
 											'0' => array(
