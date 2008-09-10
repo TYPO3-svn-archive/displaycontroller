@@ -96,6 +96,7 @@ class tx_displaycontroller extends tslib_pibase {
 			if (self::$consumer->acceptsDataStructure($provider->getProvidedDataStructure())) {
 					// Pass the data structure, load the TypoScript and get the rendered data
 				self::$consumer->setDataStructure($provider->getDataStructure());
+				self::$consumer->setParentReference($this);
 				self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->tsKey.'.']);
 				self::$consumer->startProcess();
 				$content = self::$consumer->getResult();
