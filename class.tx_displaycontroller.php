@@ -70,46 +70,62 @@ class tx_displaycontroller extends tslib_pibase {
 		$this->init($conf);
 
 		// Define the filter (if any)
-		$filter = $this->defineFilter();
+		try {
+			$filter = $this->defineFilter();
+		}
+		catch (Exception $e) {
+			// TODO: Issue warning (error?) if a problem occurred with the filter
+			// FIXME: Should the execution be blocked? => probably because we might otherwise display unwanted data
+		}
 
 		// Get the list of referenced data providers
 		$availableProviders = array();
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_providers_mm', "uid_local = '".$this->cObj->data['uid']."'", '', 'sorting ASC');
-		if ($res) {
+		if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
 			while ($row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 				$availableProviders[] = $row;
 			}
-		}
-		else {
-			// An error occurred querying the database
-		}
-		// Get the actual data provider
-		$provider = $this->controller->getDataProvider($availableProviders);
-		$provider->setDataFilter($filter);
 
-		// Get the data consumer
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_consumers_mm', "uid_local = '".$this->cObj->data['uid']."'");
-		if ($res) {
-			$availableConsumer = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-			self::$consumer = $this->controller->getDataConsumer($availableConsumer);
-				// Check if provided data structure is compatible with Data Consumer
-			if (self::$consumer->acceptsDataStructure($provider->getProvidedDataStructure())) {
-					// Pass the data structure, load the TypoScript and get the rendered data
-				self::$consumer->setDataStructure($provider->getDataStructure());
-				self::$consumer->setParentReference($this);
-				self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->tsKey.'.']);
-				self::$consumer->startProcess();
-				$content = self::$consumer->getResult();
+			// Get the actual data provider
+			try {
+				$provider = $this->controller->getDataProvider($availableProviders);
+				$provider->setDataFilter($filter);
+	
+				// Get the data consumer
+				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_consumers_mm', "uid_local = '".$this->cObj->data['uid']."'");
+				if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
+					$availableConsumer = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+					try {
+						self::$consumer = $this->controller->getDataConsumer($availableConsumer);
+							// Check if provided data structure is compatible with Data Consumer
+						if (self::$consumer->acceptsDataStructure($provider->getProvidedDataStructure())) {
+								// Pass the data structure, a reference to the controller and load the TypoScript
+							self::$consumer->setDataStructure($provider->getDataStructure());
+							self::$consumer->setParentReference($this);
+							self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->tsKey.'.']);
+								// Start the processing and get the rendered data
+							self::$consumer->startProcess();
+							$content = self::$consumer->getResult();
+						}
+						else {
+							// TODO: Issue error if data structures are not compatible between provider and consumer
+						}
+					}
+					catch (Exception $e) {
+						echo $e->getMessage();
+					}
+				}
+				else {
+					// TODO: An error occurred querying the database
+				}
 			}
-			else {
-				// Issue error if data structures are not compatible between provider and consumer
+			catch (Exception $e) {
+				echo $e->getMessage();
 			}
 		}
 		else {
-			// An error occurred querying the database
+			// TODO: An error occurred querying the database
 		}
-		// Load the data structure into the consumer
-		// Get the rendered data
 		return $content;
 	}
 
@@ -140,6 +156,15 @@ class tx_displaycontroller extends tslib_pibase {
 				case 'list':
 					break;
 				case 'filter':
+					// Get the data filter
+					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_filters_mm', "uid_local = '".$this->cObj->data['uid']."'");
+					if ($res && $availableFilter = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
+						$datafilter = $this->controller->getDataFilter($availableFilter);
+						$filter = $datafilter->getFilter();
+					}
+					else {
+						throw new Exception('No data filter found');
+					}
 					break;
 			}
 		}

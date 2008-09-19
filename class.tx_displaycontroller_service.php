@@ -48,7 +48,7 @@ class tx_displaycontroller_service extends tx_basecontroller_base {
      */
 	public function loadControllerData($id) {
 		$this->uid = $id;
-		// At this point in time, load all the provider data from the database is not necessary
+		// At this point in time, loading all the provider data from the database is not necessary
     }
 
 	/**
@@ -67,6 +67,7 @@ class tx_displaycontroller_service extends tx_basecontroller_base {
         }
 		else {
 			$provider = t3lib_div::makeInstanceService('dataprovider', $rows[0]['tablenames']);
+				// NOTE: loadData() may throw an exception, but we just let it pass at this point
 			$provider->loadData(array('table' => $rows[0]['tablenames'], 'uid' => $rows[0]['uid_foreign']));
 			return $provider;
         }
