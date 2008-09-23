@@ -154,6 +154,10 @@ class tx_displaycontroller extends tslib_pibase {
 										);
 					break;
 				case 'list':
+					$filter['limit'] = array(
+											'max' => $this->piVars['limit'],
+											'offset' => $this->piVars['page']
+										);
 					break;
 				case 'filter':
 					// Get the data filter
