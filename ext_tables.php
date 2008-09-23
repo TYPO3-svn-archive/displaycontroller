@@ -22,7 +22,7 @@ $tempColumns = array(
 		)
 	),
 	'tx_displaycontroller_datafilter' => array (		
-		'exclude' => 0,		
+		'exclude' => 1,		
 		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_datafilter',		
 		'config' => array (
 			'type' => 'group',	
@@ -44,6 +44,18 @@ $tempColumns = array(
 					'JSopenParams' => 'height=400,width=600,status=0,menubar=0,scrollbars=1'
 				),
 			)
+		)
+	),
+	'tx_displaycontroller_emptyfilter' => array (		
+		'exclude' => 1,		
+		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_emptyfilter',		
+		'config' => array (
+			'type' => 'radio',
+			'items' => array (
+				array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_emptyfilter.I.0', ''),
+				array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_emptyfilter.I.1', 'all'),
+			),
+			'readOnly' => 1 // Feature is not yet implemented
 		)
 	),
 	'tx_displaycontroller_provider' => array(		
@@ -102,13 +114,14 @@ t3lib_extMgm::addTCAcolumns('tt_content', $tempColumns, 1);
 // Define showitem property for both plug-ins
 
 $showItem = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2,linkToTop;;;;3-3-3';
-$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_provider, tx_displaycontroller_consumer';
+$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_filtertype, tx_displaycontroller_datafilter;;'.$_EXTKEY.';;, tx_displaycontroller_provider, tx_displaycontroller_consumer';
 $showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime';
 
 $TCA['tt_content']['types'][$_EXTKEY.'_pi1']['showitem'] = $showItem;
 $TCA['tt_content']['types'][$_EXTKEY.'_pi2']['showitem'] = $showItem;
 $TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY.'_pi1'] = t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif';
 $TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY.'_pi2'] = t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif';
+$TCA['tt_content']['palettes'][$_EXTKEY] = array('showitem' => tx_displaycontroller_emptyfilter);;
 
 // Register plug-ins (pi1 is cached, pi2 is not cached)
 

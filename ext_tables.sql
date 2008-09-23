@@ -5,7 +5,8 @@ CREATE TABLE tt_content (
 	tx_displaycontroller_provider int(11) DEFAULT '0' NOT NULL,
 	tx_displaycontroller_consumer int(11) DEFAULT '0' NOT NULL,
 	tx_displaycontroller_filtertype varchar(6) DEFAULT '' NOT NULL,
-	tx_displaycontroller_datafilter int(11) DEFAULT '0' NOT NULL
+	tx_displaycontroller_datafilter int(11) DEFAULT '0' NOT NULL,
+	tx_displaycontroller_emptyfilter varchar(3) DEFAULT '' NOT NULL,
 );
 
 #

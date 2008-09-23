@@ -164,6 +164,8 @@ class tx_displaycontroller extends tslib_pibase {
 					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_filters_mm', "uid_local = '".$this->cObj->data['uid']."'");
 					if ($res && $availableFilter = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 						$datafilter = $this->controller->getDataFilter($availableFilter);
+							// Load plug-in's variables into the filter
+						$datafilter->setVars($this->piVars);
 						$filter = $datafilter->getFilter();
 					}
 					else {

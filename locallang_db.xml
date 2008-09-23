@@ -17,6 +17,9 @@
 			<label index="tt_content.tx_displaycontroller_filtertype.I.3">Advanced filter (choose Data Filter below)</label>
 			<label index="tt_content.tx_displaycontroller_filtertype">Type of filter</label>
 			<label index="tt_content.tx_displaycontroller_datafilter">Advanced Data Filter</label>
+			<label index="tt_content.tx_displaycontroller_emptyfilter">If filter empty</label>
+			<label index="tt_content.tx_displaycontroller_emptyfilter.I.0">Display nothing</label>
+			<label index="tt_content.tx_displaycontroller_emptyfilter.I.1">Display everything</label>
 			<label index="wizards.edit_datafilter">Edit Data Filter</label>
 			<label index="wizards.edit_dataprovider">Edit Data Provider</label>
 			<label index="wizards.edit_dataconsumer">Edit Data Consumer</label>
