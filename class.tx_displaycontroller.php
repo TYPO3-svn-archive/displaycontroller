@@ -160,7 +160,7 @@ class tx_displaycontroller extends tslib_pibase {
 												'field' => 'uid',
 												'conditions' => array(
 													0 => array(
-														'operator' => 'eq',
+														'operator' => '=',
 														'value' => $this->piVars['showUid'],
 													)
 												)
