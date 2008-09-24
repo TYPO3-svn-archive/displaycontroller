@@ -44,6 +44,7 @@ class tx_displaycontroller extends tslib_pibase {
 	public $extKey		= 'displaycontroller';	// The extension key.
 	protected $controller; // Contains a reference to a controller object
 	protected static $consumer; // Contains a reference to the Data Consumer object
+	protected $passStructure = true; // Set to false if Data Consumer should not receive the structure
 
 	/**
 	 * This method performs various initialisations
@@ -86,10 +87,12 @@ class tx_displaycontroller extends tslib_pibase {
 				$availableProviders[] = $row;
 			}
 
-			// Get the actual data provider
+			// Get the actual data provider, if necessary
 			try {
-				$provider = $this->controller->getDataProvider($availableProviders);
-				$provider->setDataFilter($filter);
+				if ($this->passStructure) {
+					$provider = $this->controller->getDataProvider($availableProviders);
+					$provider->setDataFilter($filter);
+				}
 	
 				// Get the data consumer
 				$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_consumers_mm', "uid_local = '".$this->cObj->data['uid']."'");
@@ -97,18 +100,29 @@ class tx_displaycontroller extends tslib_pibase {
 					$availableConsumer = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 					try {
 						self::$consumer = $this->controller->getDataConsumer($availableConsumer);
-							// Check if provided data structure is compatible with Data Consumer
-						if (self::$consumer->acceptsDataStructure($provider->getProvidedDataStructure())) {
-								// Pass the data structure, a reference to the controller and load the TypoScript
-							self::$consumer->setDataStructure($provider->getDataStructure());
-							self::$consumer->setParentReference($this);
-							self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->tsKey.'.']);
-								// Start the processing and get the rendered data
-							self::$consumer->startProcess();
-							$content = self::$consumer->getResult();
+							// Pass reference to current object and appropriate TypoScript to consumer
+						self::$consumer->setParentReference($this);
+						self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->tsKey.'.']);
+							// If the structure shoud be passed to the consumer, do it now and get the rendered content
+						if ($this->passStructure) {
+								// Check if provided data structure is compatible with Data Consumer
+							if (self::$consumer->acceptsDataStructure($provider->getProvidedDataStructure())) {
+									// Pass the data structure, a reference to the controller and load the TypoScript
+								self::$consumer->setDataStructure($provider->getDataStructure());
+									// Start the processing and get the rendered data
+								self::$consumer->startProcess();
+								$content = self::$consumer->getResult();
+							}
+							else {
+								// TODO: Issue error if data structures are not compatible between provider and consumer
+							}
 						}
+							// If no structure should be passed (see defineFilter()),
+							// don't pass structure :-), but still do the rendering
+							// (this gives the opportunity to the consumer to render it's own error content, for example)
+							// This is achieved by not calling startProcess(), but just getResult()
 						else {
-							// TODO: Issue error if data structures are not compatible between provider and consumer
+							$content = self::$consumer->getResult();
 						}
 					}
 					catch (Exception $e) {
@@ -166,7 +180,19 @@ class tx_displaycontroller extends tslib_pibase {
 						$datafilter = $this->controller->getDataFilter($availableFilter);
 							// Load plug-in's variables into the filter
 						$datafilter->setVars($this->piVars);
-						$filter = $datafilter->getFilter();
+						try {
+							$filter = $datafilter->getFilter();
+								// Here handle case where the "filters" part of the filter is empty
+								// If the display nothing flag has been set, we must somehow stop the process
+								// The Data Provider should not even be called at all
+								// and the Data Consumer should receive an empty (special?) structure
+								if (count($filter['filters']) == 0 && empty($this->cObj->data['tx_displaycontroller_emptyfilter'])) {
+									$this->passStructure = false;
+								}
+						}
+						catch (Exception $e) {
+							echo 'Error getting filter: '.$e->getMessage();
+						}
 					}
 					else {
 						throw new Exception('No data filter found');

@@ -55,7 +55,6 @@ $tempColumns = array(
 				array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_emptyfilter.I.0', ''),
 				array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_emptyfilter.I.1', 'all'),
 			),
-			'readOnly' => 1 // Feature is not yet implemented
 		)
 	),
 	'tx_displaycontroller_provider' => array(		
