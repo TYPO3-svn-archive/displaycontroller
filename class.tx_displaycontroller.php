@@ -76,7 +76,6 @@ class tx_displaycontroller extends tslib_pibase {
 		}
 		catch (Exception $e) {
 			// TODO: Issue warning (error?) if a problem occurred with the filter
-			// FIXME: Should the execution be blocked? => probably because we might otherwise display unwanted data
 		}
 
 		// Get the list of referenced data providers
@@ -103,6 +102,7 @@ class tx_displaycontroller extends tslib_pibase {
 							// Pass reference to current object and appropriate TypoScript to consumer
 						self::$consumer->setParentReference($this);
 						self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->tsKey.'.']);
+						self::$consumer->setDataFilter($filter);
 							// If the structure shoud be passed to the consumer, do it now and get the rendered content
 						if ($this->passStructure) {
 								// Check if provided data structure is compatible with Data Consumer
