@@ -30,7 +30,7 @@
  */
 
 require_once(PATH_tslib.'class.tslib_pibase.php');
-require_once(t3lib_extMgm::extPath('basecontroller', 'class.tx_basecontroller.php'));
+require_once(t3lib_extMgm::extPath('basecontroller', 'class.tx_basefecontroller.php'));
 
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
@@ -53,7 +53,7 @@ class tx_displaycontroller extends tslib_pibase {
 	 */
 	protected function init($conf) {
 		$this->conf = $conf;
-		$this->controller = t3lib_div::makeInstance('tx_basecontroller');
+		$this->controller = t3lib_div::makeInstance('tx_basefecontroller');
 	}
 
 	/**

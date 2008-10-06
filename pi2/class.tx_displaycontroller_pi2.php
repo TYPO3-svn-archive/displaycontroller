@@ -40,7 +40,6 @@ require_once(t3lib_extMgm::extPath('displaycontroller', 'class.tx_displaycontrol
  * @subpackage	tx_displaycontroller
  */
 class tx_displaycontroller_pi2 extends tx_displaycontroller {
-	public $prefixId		= 'tx_displaycontroller_pi2';		// Same as class name
 	public $scriptRelPath	= 'pi2/class.tx_displaycontroller_pi2.php';	// Path to this script relative to the extension dir.
 }
 
