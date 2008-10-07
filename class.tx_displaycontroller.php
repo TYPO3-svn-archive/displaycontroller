@@ -54,6 +54,8 @@ class tx_displaycontroller extends tslib_pibase {
 	protected function init($conf) {
 		$this->conf = $conf;
 		$this->controller = t3lib_div::makeInstance('tx_basefecontroller');
+			// Override standard piVars definition
+		$this->piVars = t3lib_div::GParrayMerged($this->prefixId);
 	}
 
 	/**
