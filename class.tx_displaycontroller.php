@@ -31,6 +31,7 @@
 
 require_once(PATH_tslib.'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath('basecontroller', 'class.tx_basefecontroller.php'));
+require_once(t3lib_extMgm::extPath('basecontroller', 'lib/class.tx_basecontroller_utilities.php'));
 
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
@@ -152,12 +153,15 @@ class tx_displaycontroller extends tslib_pibase {
 	 * @return	array	Data Filter structure
 	 */
 	protected function defineFilter() {
-		$filter = array();
 		if (!empty($this->cObj->data['tx_displaycontroller_filtertype'])) {
 			switch ($this->cObj->data['tx_displaycontroller_filtertype']) {
+
+					// Simple filter for single view
+					// We expect the "table" and "showUid" parameters and assemble a filter based on those values
 				case 'single':
+					$filter = array();
 					$filter['filters'] = array(
-											'0' => array(
+											0 => array(
 												'table' => $this->piVars['table'],
 												'field' => 'uid',
 												'conditions' => array(
@@ -169,17 +173,22 @@ class tx_displaycontroller extends tslib_pibase {
 											)
 										);
 					break;
+
+					// Simple filter for list view
 				case 'list':
-					$filter['limit'] = array(
-											'max' => $this->piVars['limit'],
-											'offset' => $this->piVars['page']
-										);
+					$filter = $this->defineListFilter();
 					break;
+
+					// Handle advanced data filters
 				case 'filter':
 					// Get the data filter
 					$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_filters_mm', "uid_local = '".$this->cObj->data['uid']."'");
 					if ($res && $availableFilter = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
 						$datafilter = $this->controller->getDataFilter($availableFilter);
+							// Initialise the filter
+						$filter = $this->initFilter($availableFilter['uid_foreign']);
+							// Pass the cached filter to the DataFilter
+						$datafilter->setFilter($filter);
 							// Load plug-in's variables into the filter
 						$datafilter->setVars($this->piVars);
 						try {
@@ -190,6 +199,11 @@ class tx_displaycontroller extends tslib_pibase {
 								// and the Data Consumer should receive an empty (special?) structure
 								if (count($filter['filters']) == 0 && empty($this->cObj->data['tx_displaycontroller_emptyfilter'])) {
 									$this->passStructure = false;
+								}
+									// Otherwise we can store the filter in session
+								else {
+									$cacheKey = $this->prefixId.'_filterCache_'.$availableFilter['uid_foreign'].'_'.$this->cObj->data['uid'];
+									$GLOBALS['TSFE']->fe_user->setKey('ses', $cacheKey, $filter);
 								}
 						}
 						catch (Exception $e) {
@@ -205,6 +219,76 @@ class tx_displaycontroller extends tslib_pibase {
 		return $filter;
 	}
 
+	/**
+	 * This method is used to initialise the filter
+	 * This can be either an empty array or some structure already stored in cache
+	 *
+	 * @param	mixed	$key: a string or a number that identifies a given filter (for example, the uid of a DataFilter record)
+	 * @return	array	A filter structure or an empty array
+	 */
+	protected function initFilter($key = '') {
+		$clearCache = isset($this->piVars['clear_cache']) ? $this->piVars['clear_cache'] : t3lib_div::_GP('clear_cache');
+		if (!empty($clearCache)) {
+			$filter = array();
+		}
+		else {
+			if (empty($key)) $key = 'default';
+			$cacheKey = $this->prefixId.'_filterCache_'.$key.'_'.$this->cObj->data['uid'];
+			$cache = $GLOBALS['TSFE']->fe_user->getKey('ses', $cacheKey);
+			if (isset($cache)) {
+				$filter = $cache;
+			}
+			else {
+				$filter = array();
+			}
+		}
+		return $filter;
+	}
+
+	/**
+	 * This method defines the filter for the default, simple list view
+	 * It expects two parameters, "limit" and "page" ,for browsing the list's pages
+	 * It will also considere a default sorting scheme represented by the "sort" and "order" parameters
+	 *
+	 * @return	array	A filter structure
+	 */
+	protected function defineListFilter() {
+			// Initialise the filter
+		$filter = $this->initFilter();
+		if (!isset($filter['limit'])) $filter['limit'] = array();
+
+			// Handle the page browsing variables
+		if (isset($this->piVars['max'])) {
+			$filter['limit']['max'] = $this->piVars['max'];
+			$filter['limit']['offset'] = isset($this->piVars['page']) ? $this->piVars['page'] : 0;
+		}
+			// If the limit is still empty after that, consider the default value from TypoScript
+		if (empty($filter['limit']['max'])) {
+			$filter['limit']['max'] = $this->conf['listView.']['limit'];
+			$filter['limit']['offset'] = 0;
+		}
+
+			// Handle sorting variables
+		if (isset($this->piVars['sort'])) {
+			$sortParts = t3lib_div::trimExplode('.', $this->piVars['sort'], 1);
+			if (count($sortParts) == 2) {
+				$table = $sortParts[0];
+				$field = $sortParts[1];
+			}
+			else {
+				$table = '';
+				$field = $sortParts[0];
+			}
+			$order = isset($this->piVars['order']) ? $this->piVars['order'] : 'asc';
+			$orderby = array(0 => array('table' => $table, 'field' => $field, 'order' => $order));
+			$filter['orderby'] = $orderby;
+		}
+			// Save the filter's hash in session
+		$cacheKey = $this->prefixId.'_filterCache_default_'.$this->cObj->data['uid'];
+		$GLOBALS['TSFE']->fe_user->setKey('ses', $cacheKey, $filter);
+
+		return $filter;
+	}
 	/**
 	 * This method can be called instead of main() for rendering nested elements of a data structure
 	 * It avoids the full initialisation by refering to the consumer stored in a static variable

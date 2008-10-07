@@ -126,4 +126,8 @@ $TCA['tt_content']['palettes'][$_EXTKEY] = array('showitem' => tx_displaycontrol
 
 t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY.'_pi1', t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif'), 'CType');
 t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi2', $_EXTKEY.'_pi2', t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif'), 'CType');
+
+// Declare static TypoScript
+
+t3lib_extMgm::addStaticFile($_EXTKEY, 'static/', 'Generic display controller');
 ?>
