@@ -4,4 +4,4 @@ plugin.tx_displaycontroller_pi1 {
 	}
 }
 
-plugin.tx_displaycontroller_pi2 =< plugin.tx_displaycontroller_pi1
+plugin.tx_displaycontroller_pi2 < plugin.tx_displaycontroller_pi1
