@@ -111,7 +111,8 @@ class tx_displaycontroller extends tslib_pibase {
 								// Check if provided data structure is compatible with Data Consumer
 							if (self::$consumer->acceptsDataStructure($provider->getProvidedDataStructure())) {
 									// Pass the data structure, a reference to the controller and load the TypoScript
-								self::$consumer->setDataStructure($provider->getDataStructure());
+								$structure = $provider->getDataStructure();
+								self::$consumer->setDataStructure($structure);
 									// Start the processing and get the rendered data
 								self::$consumer->startProcess();
 								$content = self::$consumer->getResult();
