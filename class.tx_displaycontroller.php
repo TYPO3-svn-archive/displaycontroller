@@ -30,7 +30,7 @@
  */
 
 require_once(PATH_tslib.'class.tslib_pibase.php');
-require_once(t3lib_extMgm::extPath('basecontroller', 'class.tx_basefecontroller.php'));
+require_once(t3lib_extMgm::extPath('basecontroller', 'class.tx_basecontroller.php'));
 require_once(t3lib_extMgm::extPath('basecontroller', 'lib/class.tx_basecontroller_utilities.php'));
 
 /**
@@ -54,7 +54,7 @@ class tx_displaycontroller extends tslib_pibase {
 	 */
 	protected function init($conf) {
 		$this->conf = $conf;
-		$this->controller = t3lib_div::makeInstance('tx_basefecontroller');
+		$this->controller = t3lib_div::makeInstance('tx_basecontroller');
 			// Override standard piVars definition
 		$this->piVars = t3lib_div::GParrayMerged($this->prefixId);
 	}
@@ -301,6 +301,17 @@ class tx_displaycontroller extends tslib_pibase {
 		self::$consumer->setTypoScript($conf);
 		$content = self::$consumer->getSubResult();
 		return $content;
+	}
+
+// Getters and setters
+
+	/**
+	 * This method returns the plug-in's prefix id
+	 *
+	 * @return	string	The plug-in's prefix id
+	 */
+	public function getPrefixId() {
+		return $this->prefixId;
 	}
 }
 
