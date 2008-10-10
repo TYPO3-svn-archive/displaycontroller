@@ -77,7 +77,7 @@ $tempColumns = array(
 					'icon' => 'edit2.gif',
 					'popup_onlyOpenIfSelected' => 1,
 					'notNewRecords' => 1,
-					'JSopenParams' => 'height=400,width=600,status=0,menubar=0,scrollbars=1'
+					'JSopenParams' => 'height=500,width=800,status=0,menubar=0,scrollbars=1,resizable=yes'
 				),
 			)
 		)
@@ -102,7 +102,7 @@ $tempColumns = array(
 					'icon' => 'edit2.gif',
 					'popup_onlyOpenIfSelected' => 1,
 					'notNewRecords' => 1,
-					'JSopenParams' => 'height=400,width=600,status=0,menubar=0,scrollbars=1'
+					'JSopenParams' => 'height=500,width=800,status=0,menubar=0,scrollbars=1,resizable=yes'
 				),
 			)
 		)
