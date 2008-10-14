@@ -261,12 +261,12 @@ class tx_displaycontroller extends tslib_pibase {
 			// Handle the page browsing variables
 		if (isset($this->piVars['max'])) {
 			$filter['limit']['max'] = $this->piVars['max'];
-			$filter['limit']['offset'] = isset($this->piVars['page']) ? $this->piVars['page'] : 0;
 		}
+		$filter['limit']['offset'] = isset($this->piVars['page']) ? $this->piVars['page'] : 0;
+
 			// If the limit is still empty after that, consider the default value from TypoScript
 		if (empty($filter['limit']['max'])) {
 			$filter['limit']['max'] = $this->conf['listView.']['limit'];
-			$filter['limit']['offset'] = 0;
 		}
 
 			// Handle sorting variables
