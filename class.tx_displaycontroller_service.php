@@ -59,8 +59,10 @@ class tx_displaycontroller_service extends tx_basecontroller_base {
 	public function getPrimaryProvider() {
 		t3lib_div::loadTCA('tt_content');
 			// Get table where the relation to the provider is stored
+			// The condition on the "sorting" field ensures that we take only primary providers
+			// (templates will never be mapped to secondary providers)
 		$mmTable = $GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_provider']['config']['MM'];
-		$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $mmTable, "uid_local = '".$this->uid."'");
+		$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $mmTable, "uid_local = '".$this->uid."' AND sorting = '1'");
 		$numRows = count($rows);
 		if ($numRows == 0) {
 			throw new Exception('No provider found');
