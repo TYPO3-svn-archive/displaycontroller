@@ -92,8 +92,15 @@ class tx_displaycontroller extends tslib_pibase {
 			// Get the actual data provider, if necessary
 			try {
 				if ($this->passStructure) {
-					$provider = $this->controller->getDataProvider($availableProviders);
-					$provider->setDataFilter($filter);
+					try {
+						$provider = $this->controller->getDataProvider($availableProviders);
+						$provider->setDataFilter($filter);
+					}
+						// Something happened, skip passing the structure to the Data Consumer
+						// TODO: display error in the FE
+					catch (Exception $e) {
+						$this->passStructure = false;
+					}
 				}
 	
 				// Get the data consumer
@@ -123,7 +130,7 @@ class tx_displaycontroller extends tslib_pibase {
 						}
 							// If no structure should be passed (see defineFilter()),
 							// don't pass structure :-), but still do the rendering
-							// (this gives the opportunity to the consumer to render it's own error content, for example)
+							// (this gives the opportunity to the consumer to render its own error content, for example)
 							// This is achieved by not calling startProcess(), but just getResult()
 						else {
 							$content = self::$consumer->getResult();
