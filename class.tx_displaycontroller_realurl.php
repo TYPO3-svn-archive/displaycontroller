@@ -29,7 +29,7 @@
  * @author	Fabien Udriot <Cobweb>
  *
  * $Id$
- * $Rev$
+ * $Rev: 13309 $
  */
 class tx_displaycontroller_realurl {
 
