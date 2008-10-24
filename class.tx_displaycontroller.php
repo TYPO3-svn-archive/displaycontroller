@@ -111,7 +111,8 @@ class tx_displaycontroller extends tslib_pibase {
 						self::$consumer = $this->controller->getDataConsumer($availableConsumer);
 							// Pass reference to current object and appropriate TypoScript to consumer
 						self::$consumer->setParentReference($this);
-						self::$consumer->setTypoScript($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()]);
+						$typoscriptConfiguration = isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()]) ? $GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()] : array();
+						self::$consumer->setTypoScript($typoscriptConfiguration);
 						self::$consumer->setDataFilter($filter);
 							// If the structure shoud be passed to the consumer, do it now and get the rendered content
 						if ($this->passStructure) {
