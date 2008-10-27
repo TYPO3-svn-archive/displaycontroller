@@ -53,7 +53,10 @@ class tx_displaycontroller extends tslib_pibase {
 	 * @return	void
 	 */
 	protected function init($conf) {
-		$this->conf = $conf;
+			// Merge the configuration of the pi* plugin with the general configuration
+			// defined with plugin.tx_displaycontroller
+		$this->conf = t3lib_div::array_merge_recursive_overrule($conf, $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.']);
+
 		$this->controller = t3lib_div::makeInstance('tx_basecontroller');
 			// Override standard piVars definition
 		$this->piVars = t3lib_div::GParrayMerged($this->prefixId);
@@ -69,8 +72,6 @@ class tx_displaycontroller extends tslib_pibase {
 	 * @return	string		The content to display on the website
 	 */
 	public function main($content, $conf) {
-//		$content = t3lib_div::view_array($conf);
-//		$content .= t3lib_div::view_array($this->cObj->data);
 		$this->init($conf);
 
 		// Define the filter (if any)
@@ -292,12 +293,29 @@ class tx_displaycontroller extends tslib_pibase {
 			$orderby = array(0 => array('table' => $table, 'field' => $field, 'order' => $order));
 			$filter['orderby'] = $orderby;
 		}
+			// If there were no variables, check a default sorting configuration
+		elseif (!empty($this->conf['listView.']['sort'])) {
+			$sortParts = t3lib_div::trimExplode('.', $this->conf['listView.']['sort'], 1);
+			if (count($sortParts) == 2) {
+				$table = $sortParts[0];
+				$field = $sortParts[1];
+			}
+			else {
+				$table = '';
+				$field = $sortParts[0];
+			}
+			$order = isset($this->conf['listView.']['order']) ? $this->conf['listView.']['order'] : 'asc';
+			$orderby = array(0 => array('table' => $table, 'field' => $field, 'order' => $order));
+			$filter['orderby'] = $orderby;
+		}
+
 			// Save the filter's hash in session
 		$cacheKey = $this->prefixId.'_filterCache_default_'.$this->cObj->data['uid'];
 		$GLOBALS['TSFE']->fe_user->setKey('ses', $cacheKey, $filter);
 
 		return $filter;
 	}
+
 	/**
 	 * This method can be called instead of main() for rendering nested elements of a data structure
 	 * It avoids the full initialisation by refering to the consumer stored in a static variable

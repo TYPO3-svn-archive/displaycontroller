@@ -1,7 +1,5 @@
-plugin.tx_displaycontroller_pi1 {
+plugin.tx_displaycontroller {
 	listView {
 		limit = 10
 	}
 }
-
-plugin.tx_displaycontroller_pi2.listView < plugin.tx_displaycontroller_pi1.listView
