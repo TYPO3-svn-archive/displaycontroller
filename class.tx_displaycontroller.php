@@ -54,8 +54,13 @@ class tx_displaycontroller extends tslib_pibase {
 	 */
 	protected function init($conf) {
 			// Merge the configuration of the pi* plugin with the general configuration
-			// defined with plugin.tx_displaycontroller
-		$this->conf = t3lib_div::array_merge_recursive_overrule($conf, $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.']);
+			// defined with plugin.tx_displaycontroller (if defined)
+		if (isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'])) {
+			$this->conf = t3lib_div::array_merge_recursive_overrule($conf, $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.']);
+		}
+		else {
+			$this->conf = $conf;
+		}
 
 		$this->controller = t3lib_div::makeInstance('tx_basecontroller');
 			// Override standard piVars definition
