@@ -33,6 +33,9 @@
  */
 class tx_displaycontroller_realurl {
 
+	private $postVarSets = 'element';
+	private $defaultValueEmpty = 'unknown';
+
 	/**
 	 * Returns an URL segment
 	 *
@@ -41,6 +44,7 @@ class tx_displaycontroller_realurl {
 	 * @return	string
 	 */
 	public function main($parameters, $ref) {
+		#if (!is_int($parameters['tx_displaycontroller[showUid]'])) {echo $parameters['tx_displaycontroller[showUid]']; return;};
 		if (!empty($parameters['value'])) {
 			if ($parameters['decodeAlias']) {
 				return $this->decodeAlias($parameters, $ref);
@@ -77,11 +81,11 @@ class tx_displaycontroller_realurl {
 
 		// select the configuration array
 		// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
-		if (isset($ref->extConf['postVarSets'][$baseUrl]['detail'][0]['valueMap'][$speakingTable])) {
-			$table = $ref->extConf['postVarSets'][$baseUrl]['detail'][0]['valueMap'][$speakingTable];
+		if (isset($ref->extConf['postVarSets'][$baseUrl][$this->postVarSets][0]['valueMap'][$speakingTable])) {
+			$table = $ref->extConf['postVarSets'][$baseUrl][$this->postVarSets][0]['valueMap'][$speakingTable];
 		}
-		else if ($ref->extConf['postVarSets']['_DEFAULT']['detail'][0]['valueMap'][$speakingTable]) {
-			$table = $ref->extConf['postVarSets']['_DEFAULT']['detail'][0]['valueMap'][$speakingTable];
+		else if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable]) {
+			$table = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable];
 		}
 		else {
 			$table = $speakingTable;
@@ -135,14 +139,17 @@ class tx_displaycontroller_realurl {
 
 		// select the configuration array
 		// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
-		if (isset($ref->extConf['postVarSets'][$baseUrl]['detail'][1]['userFunc.'])) {
-			$configurations = $ref->extConf['postVarSets'][$baseUrl]['detail'][1]['userFunc.'];
+		if (isset($ref->extConf['postVarSets'][$baseUrl][$this->postVarSets][1]['userFunc.'])) {
+			$configurations = $ref->extConf['postVarSets'][$baseUrl][$this->postVarSets][1]['userFunc.'];
 		}
-		else if ($ref->extConf['postVarSets']['_DEFAULT']['detail'][1]['userFunc.']) {
-			$configurations = $ref->extConf['postVarSets']['_DEFAULT']['detail'][1]['userFunc.'];
+		else if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.']) {
+			$configurations = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.'];
 		}
-
-
+#TODO:
+#t3lib_div::debug($ref);
+#t3lib_div::debug($parameters);
+#t3lib_div::debug($configurations);
+#t3lib_div::debug($table);
 		// Finds out the right configuration array containing table, alias_field, alias_id (possibly)
 		if (empty($configurations[$table])) {
 			// If no configuration was foune throw an error
@@ -216,14 +223,22 @@ class tx_displaycontroller_realurl {
 		$config = array('useUniqueCache_conf' => array('strtolower' => 1, 'spaceCharacter' => '-'));
 		$alias = $ref->lookUp_cleanAlias($config, $name);
 
+		if ($alias == '') {
+			$alias = $this->defaultValueEmpty;
+		}
+
 		// Makes sure the alias is unique
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $alias . '"');
 		$loop = 1;
-		
-		while($GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0 && $loop < 100) {
-			$alias .= $config['useUniqueCache_conf']['spaceCharacter'] . $loop;
+
+		while($GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0 && $loop < 1000) {
+			$_alias = $alias . $config['useUniqueCache_conf']['spaceCharacter'] . $loop;
 			$loop ++;
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $alias . '"');
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $_alias . '"');
+		}
+
+		if (isset($_alias)) {
+			$alias = $_alias;
 		}
 		return $alias;
 	}
