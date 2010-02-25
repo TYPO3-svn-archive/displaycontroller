@@ -21,7 +21,7 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 *
-* $Id: class.ext_update.php 79 2008-12-30 15:01:27Z fsuter $
+* $Id$
 ***************************************************************/
 
 /**

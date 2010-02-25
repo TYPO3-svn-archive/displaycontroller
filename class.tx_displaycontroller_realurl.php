@@ -28,7 +28,7 @@
  * @author	Francois Suter <typo3@cobweb.ch>
  * @author	Fabien Udriot <typo3@cobweb.ch>
  *
- * $Id: class.tx_displaycontroller_realurl.php 213 2009-08-19 07:38:30Z fsuter $
+ * $Id$
  * $Rev: 13309 $
  */
 class tx_displaycontroller_realurl {

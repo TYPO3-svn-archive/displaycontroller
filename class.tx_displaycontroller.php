@@ -21,7 +21,7 @@
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
 *
-* $Id: class.tx_displaycontroller.php 263 2009-12-22 12:36:45Z fsuter $
+* $Id$
 ***************************************************************/
 /**
  * [CLASS/FUNCTION INDEX of SCRIPT]
