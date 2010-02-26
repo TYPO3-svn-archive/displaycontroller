@@ -1,4 +1,5 @@
 <?php
+// $Id$
 if (!defined ('TYPO3_MODE')) {
 	die ('Access denied.');
 }
@@ -6,6 +7,15 @@ if (!defined ('TYPO3_MODE')) {
 t3lib_div::loadTCA('tt_content');
 
 	// Add new columns to tt_content
+	//
+	// A note about MM_match_fields:
+	// This structure makes use of a lot of additional fields in the MM table
+	// "component" defines whether the related component is a consumer, a provider and a filter
+	// "rank" defines the position of the component in the relation chain (1, 2, 3, ...)
+	// "local_table" and "local_field" are set so that the relation can be reversed-engineered
+	// when looking from the other side of the relation (i.e. the component). They help
+	// the component know to which record from which table it is related and in which
+	// field to find the type of controller (which is matched to a specific datacontroller service)
 $tempColumns = array(
 	'tx_displaycontroller_consumer' => array(
 		'exclude' => 0,
@@ -18,7 +28,13 @@ $tempColumns = array(
 			'minitems' => 1,
 			'maxitems' => 1,
 			'prepend_tname' => 1,
-			'MM' => 'tx_displaycontroller_consumers_mm',
+			'MM' => 'tx_displaycontroller_components_mm',
+			'MM_match_fields' => array(
+				'component' => 'consumer',
+				'rank' => 1,
+				'local_table' => 'tt_content',
+				'local_field' => 'CType'
+			),
 			'wizards' => array(
 				'edit' => array(
 					'type' => 'popup',
@@ -43,7 +59,13 @@ $tempColumns = array(
 			'minitems' => 1,
 			'maxitems' => 1,
 			'prepend_tname' => 1,
-			'MM' => 'tx_displaycontroller_providers_mm',
+			'MM' => 'tx_displaycontroller_components_mm',
+			'MM_match_fields' => array(
+				'component' => 'provider',
+				'rank' => 1,
+				'local_table' => 'tt_content',
+				'local_field' => 'CType'
+			),
 			'wizards' => array(
 				'edit' => array(
 					'type' => 'popup',
@@ -81,7 +103,13 @@ $tempColumns = array(
 			'minitems' => 0,
 			'maxitems' => 1,
 			'prepend_tname' => 1,
-			'MM' => 'tx_displaycontroller_filters_mm',
+			'MM' => 'tx_displaycontroller_components_mm',
+			'MM_match_fields' => array(
+				'component' => 'filter',
+				'rank' => 1,
+				'local_table' => 'tt_content',
+				'local_field' => 'CType'
+			),
 			'wizards' => array(
 				'edit' => array(
 					'type' => 'popup',
@@ -117,7 +145,13 @@ $tempColumns = array(
 			'minitems' => 0,
 			'maxitems' => 1,
 			'prepend_tname' => 1,
-			'MM' => 'tx_displaycontroller_providers2_mm',
+			'MM' => 'tx_displaycontroller_components_mm',
+			'MM_match_fields' => array(
+				'component' => 'provider',
+				'rank' => 2,
+				'local_table' => 'tt_content',
+				'local_field' => 'CType'
+			),
 			'wizards' => array(
 				'edit' => array(
 					'type' => 'popup',
@@ -153,7 +187,13 @@ $tempColumns = array(
 			'minitems' => 0,
 			'maxitems' => 1,
 			'prepend_tname' => 1,
-			'MM' => 'tx_displaycontroller_filters2_mm',
+			'MM' => 'tx_displaycontroller_components_mm',
+			'MM_match_fields' => array(
+				'component' => 'filter',
+				'rank' => 2,
+				'local_table' => 'tt_content',
+				'local_field' => 'CType'
+			),
 			'wizards' => array(
 				'edit' => array(
 					'type' => 'popup',
@@ -183,15 +223,15 @@ t3lib_extMgm::addTCAcolumns('tt_content', $tempColumns, 1);
 
 	// Define showitem property for both plug-ins
 $showItem = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2,linkToTop;;;;3-3-3';
-$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;'.$_EXTKEY.'_1;;2-2-2,  tx_displaycontroller_provider2;;'.$_EXTKEY.'_2;;2-2-2, tx_displaycontroller_emptyprovider2';
+$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2';
 $showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime';
 
-$TCA['tt_content']['types'][$_EXTKEY.'_pi1']['showitem'] = $showItem;
-$TCA['tt_content']['types'][$_EXTKEY.'_pi2']['showitem'] = $showItem;
-$TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY.'_pi1'] = t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif';
-$TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY.'_pi2'] = t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif';
-$TCA['tt_content']['palettes'][$_EXTKEY.'_1'] = array('showitem' => 'tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_emptyfilter');
-$TCA['tt_content']['palettes'][$_EXTKEY.'_2'] = array('showitem' => 'tx_displaycontroller_datafilter2, tx_displaycontroller_emptyfilter2');
+$TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $showItem;
+$TCA['tt_content']['types'][$_EXTKEY . '_pi2']['showitem'] = $showItem;
+$TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY . '_pi1'] = t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif';
+$TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY . '_pi2'] = t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif';
+$TCA['tt_content']['palettes'][$_EXTKEY . '_1'] = array('showitem' => 'tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_emptyfilter');
+$TCA['tt_content']['palettes'][$_EXTKEY . '_2'] = array('showitem' => 'tx_displaycontroller_datafilter2, tx_displaycontroller_emptyfilter2');
 
 	// Register plug-ins (pi1 is cached, pi2 is not cached)
 t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY.'_pi1', t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif'), 'CType');
@@ -199,4 +239,7 @@ t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_con
 
 	// Declare static TypoScript
 t3lib_extMgm::addStaticFile($_EXTKEY, 'static/', 'Generic display controller');
+
+	// Register the name of the table linking the controller and its components
+$T3_VAR['EXT']['basecontroller']['controller_mm_tables'][] = 'tx_displaycontroller_components_mm';
 ?>

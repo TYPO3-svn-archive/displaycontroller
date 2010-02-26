@@ -20,33 +20,28 @@
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
-*
-* $Id$
 ***************************************************************/
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- * Hint: use extdeveval to insert/update function index above.
- */
 
-require_once(PATH_tslib.'class.tslib_pibase.php');
+require_once(PATH_tslib . 'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath('basecontroller', 'class.tx_basecontroller.php'));
 require_once(t3lib_extMgm::extPath('basecontroller', 'lib/class.tx_basecontroller_utilities.php'));
 
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
  *
- * @author	Francois Suter (Cobweb) <typo3@cobweb.ch>
- * @package	TYPO3
+ * @author		Francois Suter (Cobweb) <typo3@cobweb.ch>
+ * @package		TYPO3
  * @subpackage	tx_displaycontroller
+ *
+ * $Id$
  */
 class tx_displaycontroller extends tslib_pibase {
 	public $prefixId	= 'tx_displaycontroller';		// Same as class name
 	public $extKey		= 'displaycontroller';	// The extension key.
 	protected $controller; // Contains a reference to a controller object
 	protected static $consumer; // Contains a reference to the Data Consumer object
-	protected $passStructure = true; // Set to false if Data Consumer should not receive the structure
-	protected $debug = false; // Debug flag
+	protected $passStructure = TRUE; // Set to FALSE if Data Consumer should not receive the structure
+	protected $debug = FALSE; // Debug flag
 
 	/**
 	 * This method performs various initialisations
@@ -56,10 +51,12 @@ class tx_displaycontroller extends tslib_pibase {
 	protected function init($conf) {
 			// Activate debug mode if BE user is logged in
 			// (other conditions may be added at a later point)
-		if (!empty($GLOBALS['TSFE']->beUserLogin)) $this->debug = true;
+		if (!empty($GLOBALS['TSFE']->beUserLogin)) {
+			$this->debug = TRUE;
+		}
 			// Merge the configuration of the pi* plugin with the general configuration
 			// defined with plugin.tx_displaycontroller (if defined)
-		if (isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'])) {
+		if (isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'])) {
 			$this->conf = t3lib_div::array_merge_recursive_overrule($conf, $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.']);
 		}
 		else {
@@ -116,6 +113,7 @@ class tx_displaycontroller extends tslib_pibase {
 	public function main($content, $conf) {
 		$this->init($conf);
 		$content = '';
+		$filter = array();
 
 			// Handle the secondary provider first
 		if (!empty($this->cObj->data['tx_displaycontroller_provider2'])) {
@@ -127,23 +125,23 @@ class tx_displaycontroller extends tslib_pibase {
 				// Get the secondary provider if necessary,
 				// i.e. if the process was not blocked by the advanced filter (by setting the passStructure flag to false)
 			if ($this->passStructure) {
-				$res = $this->getLocalizedMM('tx_displaycontroller_providers2_mm');
-				if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
-					$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-
+				try {
+					$secondaryProviderData = $this->getComponent('provider', 2);
 					try {
-						$secondaryProvider = $this->controller->getDataProvider($row);
+						$secondaryProvider = $this->controller->getDataProvider($secondaryProviderData);
 						$secondaryProvider->setDataFilter($secondaryFilter);
 					}
 						// Something happened, skip passing the structure to the Data Consumer
 					catch (Exception $e) {
-						$this->passStructure = false;
+						$this->passStructure = FALSE;
 						if ($this->debug) {
-							echo 'Secondary provider set passStructure to false with the following exception: '.$e->getMessage();
+							echo 'Secondary provider set passStructure to false with the following exception: ' . $e->getMessage();
 						}
 					}
 				}
-				
+				catch (Exception $e) {
+					// Nothing to do if no secondary provider was found
+				}
 			}
 		}
 
@@ -155,91 +153,83 @@ class tx_displaycontroller extends tslib_pibase {
 		catch (Exception $e) {
 				// Issue warning (error?) if a problem occurred with the filter
 			if ($this->debug) {
-				echo 'The primary filter threw the following exception: '.$e->getMessage();
+				echo 'The primary filter threw the following exception: ' . $e->getMessage();
 			}
 		}
 
 			// Get the primary data provider
-		$res = $this->getLocalizedMM('tx_displaycontroller_providers_mm');
-		if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
-			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-
+		try {
+			$primaryProviderData = $this->getComponent('provider', 1);
 				// Get the primary data provider, if necessary
-			try {
-				if ($this->passStructure) {
-					try {
-						$primaryProvider = $this->controller->getDataProvider($row, isset($secondaryProvider) ? $secondaryProvider : null);
-						$primaryProvider->setDataFilter($filter);
-							// If the secondary provider exists and the option was chosen
-							// to display everything in the primary provider, no matter what
-							// the result from the secondary provider, make sure to set
-							// the empty data structure flag to false, otherwise nothing will display
-						if (isset($secondaryProvider) && !empty($this->cObj->data['tx_displaycontroller_emptyprovider2'])) {
-							$primaryProvider->setEmptyDataStructureFlag(FALSE);
-						}
-					}
-						// Something happened, skip passing the structure to the Data Consumer
-					catch (Exception $e) {
-						$this->passStructure = false;
-						if ($this->debug) {
-							echo 'Primary provider set passStructure to false with the following exception: '.$e->getMessage();
-						}
+			if ($this->passStructure) {
+				try {
+					$primaryProvider = $this->controller->getDataProvider($primaryProviderData, isset($secondaryProvider) ? $secondaryProvider : null);
+					$primaryProvider->setDataFilter($filter);
+						// If the secondary provider exists and the option was chosen
+						// to display everything in the primary provider, no matter what
+						// the result from the secondary provider, make sure to set
+						// the empty data structure flag to false, otherwise nothing will display
+					if (isset($secondaryProvider) && !empty($this->cObj->data['tx_displaycontroller_emptyprovider2'])) {
+						$primaryProvider->setEmptyDataStructureFlag(FALSE);
 					}
 				}
-	
-					// Get the data consumer
-				$res = $this->getLocalizedMM('tx_displaycontroller_consumers_mm');
-				if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
-					$availableConsumer = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-					try {
-						self::$consumer = $this->controller->getDataConsumer($availableConsumer);
-							// Pass reference to current object and appropriate TypoScript to consumer
-						self::$consumer->setParentReference($this);
-						$typoscriptConfiguration = isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()]) ? $GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()] : array();
-						self::$consumer->setTypoScript($typoscriptConfiguration);
-						self::$consumer->setDataFilter($filter);
-							// If the structure shoud be passed to the consumer, do it now and get the rendered content
-						if ($this->passStructure) {
-								// Check if provided data structure is compatible with Data Consumer
-							if (self::$consumer->acceptsDataStructure($primaryProvider->getProvidedDataStructure())) {
-									// Get the data structure and pass it to the consumer
-								$structure = $primaryProvider->getDataStructure();
-									// Check if there's a redirection configuration
-								$this->handleRedirection($structure);
-									// Pass the data structure to the consumer
-								self::$consumer->setDataStructure($structure);
-									// Start the processing and get the rendered data
-								self::$consumer->startProcess();
-								$content = self::$consumer->getResult();
-							} else {
-								// TODO: Issue error if data structures are not compatible between provider and consumer
-							}
-						}
-							// If no structure should be passed (see defineFilter()),
-							// don't pass structure :-), but still do the rendering
-							// (this gives the opportunity to the consumer to render its own error content, for example)
-							// This is achieved by not calling startProcess(), but just getResult()
-						else {
-							$content = self::$consumer->getResult();
-						}
-					}
-					catch (Exception $e) {
-						if ($this->debug) {
-							echo 'Could not get the data consumer. The following exception was returned: '.$e->getMessage();
-						}
-					}
-				} else {
+					// Something happened, skip passing the structure to the Data Consumer
+				catch (Exception $e) {
+					$this->passStructure = FALSE;
 					if ($this->debug) {
-						echo 'An error occurred querying the database for the data consumer.';
+						echo 'Primary provider set passStructure to false with the following exception: '.$e->getMessage();
 					}
-				}
-			} // FIXME: is this try/catch block useless?
-			catch (Exception $e) {
-				if ($this->debug) {
-					echo 'An error occurred with the following exception: '.$e->getMessage();
 				}
 			}
-		} else {
+
+				// Get the data consumer
+			try {
+				$consumerData = $this->getComponent('consumer');
+				try {
+					self::$consumer = $this->controller->getDataConsumer($consumerData);
+						// Pass reference to current object and appropriate TypoScript to consumer
+					self::$consumer->setParentReference($this);
+					$typoscriptConfiguration = isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()]) ? $GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()] : array();
+					self::$consumer->setTypoScript($typoscriptConfiguration);
+					self::$consumer->setDataFilter($filter);
+						// If the structure shoud be passed to the consumer, do it now and get the rendered content
+					if ($this->passStructure) {
+							// Check if provided data structure is compatible with Data Consumer
+						if (self::$consumer->acceptsDataStructure($primaryProvider->getProvidedDataStructure())) {
+								// Get the data structure and pass it to the consumer
+							$structure = $primaryProvider->getDataStructure();
+								// Check if there's a redirection configuration
+							$this->handleRedirection($structure);
+								// Pass the data structure to the consumer
+							self::$consumer->setDataStructure($structure);
+								// Start the processing and get the rendered data
+							self::$consumer->startProcess();
+							$content = self::$consumer->getResult();
+						} else {
+							// TODO: Issue error if data structures are not compatible between provider and consumer
+						}
+					}
+						// If no structure should be passed (see defineFilter()),
+						// don't pass structure :-), but still do the rendering
+						// (this gives the opportunity to the consumer to render its own error content, for example)
+						// This is achieved by not calling startProcess(), but just getResult()
+					else {
+						$content = self::$consumer->getResult();
+					}
+				}
+				catch (Exception $e) {
+					if ($this->debug) {
+						echo 'Could not get the data consumer. The following exception was returned: '.$e->getMessage();
+					}
+				}
+			}
+			catch (Exception $e) {
+				if ($this->debug) {
+					echo 'An error occurred querying the database for the data consumer.';
+				}
+			}
+		}
+		catch (Exception $e) {
 			if ($this->debug) {
 				echo 'An error occurred querying the database for the primary data provider.';
 			}
@@ -310,15 +300,15 @@ class tx_displaycontroller extends tslib_pibase {
 		$clearCache = isset($this->piVars['clear_cache']) ? $this->piVars['clear_cache'] : t3lib_div::_GP('clear_cache');
 		if (!empty($clearCache)) {
 			$filter = array();
-		}
-		else {
-			if (empty($key)) $key = 'default';
+		} else {
+			if (empty($key)) {
+				$key = 'default';
+			}
 			$cacheKey = $this->prefixId . '_filterCache_' . $key . '_' . $this->cObj->data['uid'] . '_' . $GLOBALS['TSFE']->id;
 			$cache = $GLOBALS['TSFE']->fe_user->getKey('ses', $cacheKey);
 			if (isset($cache)) {
 				$filter = $cache;
-			}
-			else {
+			} else {
 				$filter = array();
 			}
 		}
@@ -387,7 +377,7 @@ class tx_displaycontroller extends tslib_pibase {
 		}
 
 			// Save the filter's hash in session
-		$cacheKey = $this->prefixId.'_filterCache_default_'.$this->cObj->data['uid'].'_'.$GLOBALS['TSFE']->id;
+		$cacheKey = $this->prefixId . '_filterCache_default_' . $this->cObj->data['uid'] . '_' . $GLOBALS['TSFE']->id;
 		$GLOBALS['TSFE']->fe_user->setKey('ses', $cacheKey, $filter);
 
 		return $filter;
@@ -400,41 +390,38 @@ class tx_displaycontroller extends tslib_pibase {
 	 * @return	array	A filter structure
 	 */
 	protected function defineAdvancedFilter($type = 'primary') {
-			// Define variables depending on filter type
+		$filter = array();
+			// Define rank based on call parameter
+		$rank = 1;
 		if ($type == 'secondary') {
-			$table = 'tx_displaycontroller_filters2_mm';
-			$checkField = 'tx_displaycontroller_emptyfilter2';
-		}
-		else {
-			$table = 'tx_displaycontroller_filters_mm';
-			$checkField = 'tx_displaycontroller_emptyfilter';
+			$rank = 2;
 		}
 			// Get the data filter
-		$res = $this->getLocalizedMM($table);
-		if ($res && $availableFilter = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res)) {
-			$datafilter = $this->controller->getDataFilter($availableFilter);
+		try {
+			$filterData = $this->getComponent('filter', $rank);
+			$datafilter = $this->controller->getDataFilter($filterData);
 				// Initialise the filter
-			$filter = $this->initFilter($availableFilter['uid_foreign']);
+			$filter = $this->initFilter($filterData['uid_foreign']);
 				// Pass the cached filter to the DataFilter
 			$datafilter->setFilter($filter);
 			try {
 				$filter = $datafilter->getFilterStructure();
 					// Store the filter in session
-				$cacheKey = $this->prefixId . '_filterCache_' . $availableFilter['uid_foreign'] . '_' . $this->cObj->data['uid'] . '_' . $GLOBALS['TSFE']->id;
+				$cacheKey = $this->prefixId . '_filterCache_' . $filterData['uid_foreign'] . '_' . $this->cObj->data['uid'] . '_' . $GLOBALS['TSFE']->id;
 				$GLOBALS['TSFE']->fe_user->setKey('ses', $cacheKey, $filter);
 					// Here handle case where the "filters" part of the filter is empty
 					// If the display nothing flag has been set, we must somehow stop the process
 					// The Data Provider should not even be called at all
 					// and the Data Consumer should receive an empty (special?) structure
 				if (count($filter['filters']) == 0 && empty($this->cObj->data[$checkField])) {
-					$this->passStructure = false;
+					$this->passStructure = FALSE;
 				}
 			}
 			catch (Exception $e) {
 				echo 'Error getting filter: '.$e->getMessage();
 			}
 		}
-		else {
+		catch (Exception $e) {
 			throw new Exception('No data filter found');
 		}
 		return $filter;
@@ -463,7 +450,7 @@ class tx_displaycontroller extends tslib_pibase {
 
 				// First interpret the enable property
 			if (empty($redirectConfiguration['enable'])) {
-				$enable = false;
+				$enable = FALSE;
 			}
 			else {
 				if (isset($this->conf['redirect.']['enable.'])) {
@@ -481,7 +468,7 @@ class tx_displaycontroller extends tslib_pibase {
 					$condition = $localCObj->checkIf($redirectConfiguration['condition.']);
 				}
 				else {
-					$condition = false;
+					$condition = FALSE;
 				}
 					// If the condition was true, calculate the URL
 				if ($condition) {
@@ -490,28 +477,49 @@ class tx_displaycontroller extends tslib_pibase {
 						$redirectConfiguration['url.']['returnLast'] = 'url';
 						$url = $localCObj->typoLink('', $redirectConfiguration['url.']);
 					}
-					header('Location: '.t3lib_div::locationHeaderUrl($url));
+					header('Location: ' . t3lib_div::locationHeaderUrl($url));
 				}
 			}
 		}
 	}
-	
-	
+
 	/**
-	 * Returns localized data for filters, consumers and providers
-	 *
-	 * @param	string	Name of the mm table
-	 * @return	object	Typo3_DB object
+	 * This method is used to retrieve any of the components related to the controller
+	 * An exception is thrown if none is found
+	 * 
+	 * @param	string	$component: type of component (provider, consumer, filter)
+	 * @param	integer	$rank: level of the component (1 = primary, 2 = secondary)
+	 * @return	array	Database record from the MM-table linking the controller to its components
 	 */
-	
-	protected function getLocalizedMM($table) {
-		if(!empty($this->cObj->data['_LOCALIZED_UID'])) {
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $table, "uid_local = '".$this->cObj->data['_LOCALIZED_UID']."'");
+	protected function getComponent($component, $rank = 1) {
+		$componentData = array();
+		$hasComponent = FALSE;
+		$whereClause = "component = '" . $component . "' AND rank = '" . $rank . "'";
+			// If the content element has been localized, check for component
+			// as related to localized uid
+		if (!empty($this->cObj->data['_LOCALIZED_UID'])) {
+			$where = $whereClause . " AND uid_local = '" . $this->cObj->data['_LOCALIZED_UID'] . "'";
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_components_mm', $where);
 			if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
-				return $res;
+				$componentData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				$hasComponent = TRUE;
 			}
 		}
-		return $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', $table, "uid_local = '".$this->cObj->data['uid']."'");
+			// If no localized relation exists, check for component as related
+			// to original uid
+		if (!$hasComponent) {
+			$where = $whereClause . " AND uid_local = '" . $this->cObj->data['uid'] . "'";
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_components_mm', $where);
+			if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
+				$componentData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+				$hasComponent = TRUE;
+			}
+		}
+		if (!$hasComponent) {
+			$message = 'No component of type ' . $component . ' and level ' . $rank . ' found';
+			throw new Exception($message, 1265577739);
+		}
+		return $componentData;
 	}
 	
 	/**

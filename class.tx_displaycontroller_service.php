@@ -20,37 +20,20 @@
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
-*
-* $Id$
 ***************************************************************/
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- * Hint: use extdeveval to insert/update function index above.
- */
 
 require_once(t3lib_extMgm::extPath('basecontroller', 'services/class.tx_basecontroller_base.php'));
 
 /**
  * Service for the 'displaycontroller' extension.
  *
- * @author	Francois Suter (Cobweb) <typo3@cobweb.ch>
- * @package	TYPO3
+ * @author		Francois Suter (Cobweb) <typo3@cobweb.ch>
+ * @package		TYPO3
  * @subpackage	tx_displaycontroller
+ *
+ * $Id$
  */
 class tx_displaycontroller_service extends tx_basecontroller_base {
-	protected $uid;
-
-	/**
-     * This method reads the information related to the controller from the database
-     * 
-     * @param	integer	$id: primary key of the controller instance
-     */
-	public function loadControllerData($id) {
-		$this->uid = $id;
-		// At this point in time, loading all the provider data from the database is not necessary
-    }
-
 	/**
      * This method is expected to return the primary provider related to the given display controller instance
      * 
@@ -59,15 +42,14 @@ class tx_displaycontroller_service extends tx_basecontroller_base {
 	public function getPrimaryProvider() {
 		t3lib_div::loadTCA('tt_content');
 			// Get table where the relation to the provider is stored
-			// The condition on the "sorting" field ensures that we take only primary providers
-			// (templates will never be mapped to secondary providers)
 		$mmTable = $GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_provider']['config']['MM'];
-		$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $mmTable, "uid_local = '".$this->uid."' AND sorting = '1'");
+			// Get the provider-relation record
+		$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows('*', $mmTable, "uid_local = '" . $this->uid . "' AND component = 'provider' AND rank = '1'");
 		$numRows = count($rows);
 		if ($numRows == 0) {
 			throw new Exception('No provider found');
-        }
-		else {
+        } else {
+				// Create an instance of the appropriate service
 			$provider = t3lib_div::makeInstanceService('dataprovider', $rows[0]['tablenames']);
 				// NOTE: loadData() may throw an exception, but we just let it pass at this point
 			$provider->loadData(array('table' => $rows[0]['tablenames'], 'uid' => $rows[0]['uid_foreign']));

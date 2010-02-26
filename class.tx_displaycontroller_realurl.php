@@ -25,11 +25,12 @@
 /**
  * RealURL translator for the 'displaycontroller' extension.
  *
- * @author	Francois Suter <typo3@cobweb.ch>
- * @author	Fabien Udriot <typo3@cobweb.ch>
+ * @author		Francois Suter <typo3@cobweb.ch>
+ * @author		Fabien Udriot <typo3@cobweb.ch>
+ * @package		TYPO3
+ * @subpackage	tx_displaycontroller
  *
  * $Id$
- * $Rev: 13309 $
  */
 class tx_displaycontroller_realurl {
 

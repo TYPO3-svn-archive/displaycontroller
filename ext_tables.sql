@@ -14,61 +14,17 @@ CREATE TABLE tt_content (
 );
 
 #
-# MM table for Data Consumers
+# Relation table between controller and all components
 #
-CREATE TABLE tx_displaycontroller_consumers_mm (
+CREATE TABLE tx_displaycontroller_components_mm (
 	uid_local int(11) DEFAULT '0' NOT NULL,
 	uid_foreign int(11) DEFAULT '0' NOT NULL,
 	tablenames varchar(100) DEFAULT '' NOT NULL,
 	sorting int(11) DEFAULT '0' NOT NULL,
-	KEY uid_local (uid_local),
-	KEY uid_foreign (uid_foreign)
-);
-
-#
-# MM table for Primary Data Filters
-#
-CREATE TABLE tx_displaycontroller_filters_mm (
-	uid_local int(11) DEFAULT '0' NOT NULL,
-	uid_foreign int(11) DEFAULT '0' NOT NULL,
-	tablenames varchar(100) DEFAULT '' NOT NULL,
-	sorting int(11) DEFAULT '0' NOT NULL,
-	KEY uid_local (uid_local),
-	KEY uid_foreign (uid_foreign)
-);
-
-#
-# MM table for Primary Data Providers
-#
-CREATE TABLE tx_displaycontroller_providers_mm (
-	uid_local int(11) DEFAULT '0' NOT NULL,
-	uid_foreign int(11) DEFAULT '0' NOT NULL,
-	tablenames varchar(100) DEFAULT '' NOT NULL,
-	sorting int(11) DEFAULT '0' NOT NULL,
-	KEY uid_local (uid_local),
-	KEY uid_foreign (uid_foreign)
-);
-
-#
-# MM table for Secondary Data Filters
-#
-CREATE TABLE tx_displaycontroller_filters2_mm (
-	uid_local int(11) DEFAULT '0' NOT NULL,
-	uid_foreign int(11) DEFAULT '0' NOT NULL,
-	tablenames varchar(100) DEFAULT '' NOT NULL,
-	sorting int(11) DEFAULT '0' NOT NULL,
-	KEY uid_local (uid_local),
-	KEY uid_foreign (uid_foreign)
-);
-
-#
-# MM table for Secondary Data Providers
-#
-CREATE TABLE tx_displaycontroller_providers2_mm (
-	uid_local int(11) DEFAULT '0' NOT NULL,
-	uid_foreign int(11) DEFAULT '0' NOT NULL,
-	tablenames varchar(100) DEFAULT '' NOT NULL,
-	sorting int(11) DEFAULT '0' NOT NULL,
+	component varchar(100) DEFAULT '' NOT NULL,
+	rank tinyint(4) DEFAULT '1' NOT NULL,
+	local_table varchar(255) DEFAULT '' NOT NULL,
+	local_field varchar(255) DEFAULT '' NOT NULL,
 	KEY uid_local (uid_local),
 	KEY uid_foreign (uid_foreign)
 );
