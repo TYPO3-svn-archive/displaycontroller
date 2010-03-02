@@ -20,14 +20,7 @@
 *  GNU General Public License for more details.
 *
 *  This copyright notice MUST APPEAR in all copies of the script!
-*
-* $Id$
 ***************************************************************/
-/**
- * [CLASS/FUNCTION INDEX of SCRIPT]
- *
- * Hint: use extdeveval to insert/update function index above.
- */
 
 require_once(t3lib_extMgm::extPath('displaycontroller', 'class.tx_displaycontroller.php'));
 
@@ -35,9 +28,11 @@ require_once(t3lib_extMgm::extPath('displaycontroller', 'class.tx_displaycontrol
 /**
  * Plugin 'Display Controller (not cached)' for the 'displaycontroller' extension.
  *
- * @author	Francois Suter (Cobweb) <typo3@cobweb.ch>
- * @package	TYPO3
+ * @author		Francois Suter (Cobweb) <typo3@cobweb.ch>
+ * @package		TYPO3
  * @subpackage	tx_displaycontroller
+ *
+ * $Id$
  */
 class tx_displaycontroller_pi2 extends tx_displaycontroller {
 	public $scriptRelPath	= 'pi2/class.tx_displaycontroller_pi2.php';	// Path to this script relative to the extension dir.
