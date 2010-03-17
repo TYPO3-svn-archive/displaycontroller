@@ -308,10 +308,10 @@ class tx_displaycontroller extends tslib_pibase {
 	 * @return	array	A filter structure or an empty array
 	 */
 	protected function initFilter($key = '') {
+		$filter = array();
 		$clearCache = isset($this->piVars['clear_cache']) ? $this->piVars['clear_cache'] : t3lib_div::_GP('clear_cache');
-		if (!empty($clearCache)) {
-			$filter = array();
-		} else {
+			// If cache is not cleared, retrieve cached filter
+		if (empty($clearCache)) {
 			if (empty($key)) {
 				$key = 'default';
 			}
@@ -319,8 +319,6 @@ class tx_displaycontroller extends tslib_pibase {
 			$cache = $GLOBALS['TSFE']->fe_user->getKey('ses', $cacheKey);
 			if (isset($cache)) {
 				$filter = $cache;
-			} else {
-				$filter = array();
 			}
 		}
 			// Declare hook for extending the initialisation of the filter
@@ -359,28 +357,24 @@ class tx_displaycontroller extends tslib_pibase {
 			// Handle sorting variables
 		if (isset($this->piVars['sort'])) {
 			$sortParts = t3lib_div::trimExplode('.', $this->piVars['sort'], 1);
+			$table = '';
+			$field = $sortParts[0];
 			if (count($sortParts) == 2) {
 				$table = $sortParts[0];
 				$field = $sortParts[1];
-			}
-			else {
-				$table = '';
-				$field = $sortParts[0];
 			}
 			$order = isset($this->piVars['order']) ? $this->piVars['order'] : 'asc';
 			$orderby = array(0 => array('table' => $table, 'field' => $field, 'order' => $order));
 			$filter['orderby'] = $orderby;
-		}
+
 			// If there were no variables, check a default sorting configuration
-		elseif (!empty($this->conf['listView.']['sort'])) {
+		} elseif (!empty($this->conf['listView.']['sort'])) {
 			$sortParts = t3lib_div::trimExplode('.', $this->conf['listView.']['sort'], 1);
+			$table = '';
+			$field = $sortParts[0];
 			if (count($sortParts) == 2) {
 				$table = $sortParts[0];
 				$field = $sortParts[1];
-			}
-			else {
-				$table = '';
-				$field = $sortParts[0];
 			}
 			$order = isset($this->conf['listView.']['order']) ? $this->conf['listView.']['order'] : 'asc';
 			$orderby = array(0 => array('table' => $table, 'field' => $field, 'order' => $order));
@@ -462,14 +456,11 @@ class tx_displaycontroller extends tslib_pibase {
 			}
 
 				// First interpret the enable property
-			if (empty($redirectConfiguration['enable'])) {
-				$enable = FALSE;
-			}
-			else {
+			$enable = FALSE;
+			if (!empty($redirectConfiguration['enable'])) {
 				if (isset($this->conf['redirect.']['enable.'])) {
 					$enable = $this->cObj->stdWrap($this->conf['redirect.']['enable'], $this->conf['redirect.']['enable.']);
-				}
-				else {
+				} else {
 					$enable = $this->conf['redirect.']['enable'];
 				}
 			}
@@ -477,11 +468,9 @@ class tx_displaycontroller extends tslib_pibase {
 				// If the redirection is indeed enabled, continue
 			if ($enable) {
 					// Get the result of the condition
+				$condition = FALSE;
 				if (isset($redirectConfiguration['condition.'])) {
 					$condition = $localCObj->checkIf($redirectConfiguration['condition.']);
-				}
-				else {
-					$condition = FALSE;
 				}
 					// If the condition was true, calculate the URL
 				if ($condition) {
