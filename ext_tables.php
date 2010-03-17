@@ -233,6 +233,9 @@ $TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY . '_pi2'] = t3lib_extMgm::extRe
 $TCA['tt_content']['palettes'][$_EXTKEY . '_1'] = array('showitem' => 'tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_emptyfilter');
 $TCA['tt_content']['palettes'][$_EXTKEY . '_2'] = array('showitem' => 'tx_displaycontroller_datafilter2, tx_displaycontroller_emptyfilter2');
 
+	// Add context sensitive help (csh) for the new fields
+t3lib_extMgm::addLLrefForTCAdescr('tt_content', 'EXT:' . $_EXTKEY . '/locallang_csh_ttcontent.xml');
+
 	// Register plug-ins (pi1 is cached, pi2 is not cached)
 t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY.'_pi1', t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif'), 'CType');
 t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi2', $_EXTKEY.'_pi2', t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif'), 'CType');

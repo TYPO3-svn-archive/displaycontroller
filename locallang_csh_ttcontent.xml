@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- $Id$-->
+<T3locallang>
+	<meta type="array">
+		<description>Contents of displaycontroller csh</description>
+		<type>CSH</type>
+		<csh_table>tt_content</csh_table>
+		<fileId>EXT:displaycontroller/locallang_csh_ttcontent.xml</fileId>
+		<labelContext type="array">
+		</labelContext>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="tx_displaycontroller_consumer.description">Choose the component that will transform the data into HTML.</label>
+			<label index="tx_displaycontroller_provider.description">Choose the component that provides the data to display.</label>
+			<label index="tx_displaycontroller_filtertype.description">Choose the type of filter to apply to the Primary Data Provider.</label>
+			<label index="tx_displaycontroller_filtertype.details">
+				"None" means that no filter is applied at all. Note that choosing this option will make any Advanced Data Filter defined to be ignored.
+
+				"Detail view" makes the Display Controller automatically generate a filter based on the default GET/POST parameters used to define a detail view (tx_displaycontroller[table] and tx_displaycontroller[showUid]).
+
+				"List view" works the same way, but for the default parameters used in a list view, which are related to browsing and sorting (tx_displaycontroller[max], tx_displaycontroller[page], tx_displaycontroller[order] and tx_displaycontroller[sort]).
+
+				"Advanced filter" means that any Data Filter defined will be used. Data Filters should be used when the predefined filters described above are not sufficient for the given use case.
+			</label>
+			<label index="tx_displaycontroller_datafilter.description">This filter interacts with the Primary Data Provider. If defined don't forget to also check the "Advanced filter" radio button.</label>
+			<label index="tx_displaycontroller_emptyfilter.description">Choose the behavior when the filter didn't return any condition.</label>
+			<label index="tx_displaycontroller_emptyfilter.details">
+				It may happen that the Data Filter returns nothing, for example when the GET/POST variables being looked for are not defined (think of hitting a search button without entering a search term).
+
+				In such a case it is necessary to decide what should happen: either no data should be displayed ("Display nothing") or all the possible data should be displayed ("Display everything").
+			</label>
+			<label index="tx_displaycontroller_provider2.description">Choose the component that provides data to be fed into the Primary Data Provider.</label>
+			<label index="tx_displaycontroller_provider2.details">
+				Secondary Data Providers are generally specialized Data Providers that use some specific mechanism to retrieve some data. Most commonly they will return a list of id's (idlist-type data structure) which is fed into the Primary Data Provider to restrict the list of records it returns.
+			</label>
+			<label index="tx_displaycontroller_datafilter2.description">This filter interacts with the Secondary Data Provider. Note that some Secondary Data Providers don't handle filters.</label>
+			<label index="tx_displaycontroller_emptyfilter2.description">Choose the behavior when the filter didn't return any condition.</label>
+			<label index="tx_displaycontroller_emptyfilter2.details">
+				It may happen that the (secondary) Data Filter returns nothing, for example when the GET/POST variables being looked for are not defined (think of hitting a search button without entering a search term).
+
+				In such a case it is necessary to decide what should happen: either no data should be displayed ("Display nothing") or all the possible data should be displayed ("Display everything").
+			</label>
+			<label index="tx_displaycontroller_emptyprovider2.description">Choose the behavior when the Secondary Data Provider returns nothing.</label>
+			<label index="tx_displaycontroller_emptyprovider2.details">
+				The Secondary Data Provider is expected to make some specialized selection of records that are then handled by the Primary Data Provider.
+
+				When the Secondary Data Provider returns nothing, it is necessary to decide what the Primary Data Provider should do: either do nothing either ("Display nothing") or proceed without restriction ("Display everything").
+			</label>
+		</languageKey>
+	</data>
+</T3locallang>
