@@ -404,8 +404,10 @@ class tx_displaycontroller extends tslib_pibase {
 		$filter = array();
 			// Define rank based on call parameter
 		$rank = 1;
+		$checkField = 'tx_displaycontroller_emptyfilter';
 		if ($type == 'secondary') {
 			$rank = 2;
+			$checkField = 'tx_displaycontroller_emptyfilter2';
 		}
 			// Get the data filter
 		try {
