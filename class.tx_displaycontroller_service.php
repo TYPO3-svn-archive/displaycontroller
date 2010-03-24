@@ -22,7 +22,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('basecontroller', 'services/class.tx_basecontroller_base.php'));
+require_once(t3lib_extMgm::extPath('tesseract', 'services/class.tx_tesseract_base.php'));
 
 /**
  * Service for the 'displaycontroller' extension.
@@ -33,7 +33,7 @@ require_once(t3lib_extMgm::extPath('basecontroller', 'services/class.tx_basecont
  *
  * $Id$
  */
-class tx_displaycontroller_service extends tx_basecontroller_base {
+class tx_displaycontroller_service extends tx_tesseract_base {
 	/**
      * This method is expected to return the primary provider related to the given display controller instance
      * 

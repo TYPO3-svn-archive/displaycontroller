@@ -149,23 +149,19 @@ class tx_displaycontroller_realurl {
 		}
 
 			// Make sure the language variable is set
+		$lang = 0;
 		if (isset($ref->extConf['pagePath']['languageGetVar']) && isset($parameters[$ref->extConf['pagePath']['languageGetVar']])) {
 			$lang = $parameters[$ref->extConf['pagePath']['languageGetVar']];
-		}
-		else {
-			$lang = 0;
 		}
 
 			// Get the id parameter
 		$id = intval($parameters['tx_displaycontroller[showUid]']);
 
 			// Get the name of the field to fetch the alias from
-			// Check if field alias contains a curly brace, if yes, call the basecontroller parser
+			// Check if field alias contains a curly brace, if yes, call the expressions parser
+		$field_alias = $configuration['alias_field'];
 		if (strpos($configuration['alias_field'], '{') !== false) {
 			$field_alias = tx_expressions_parser::evaluateString($configuration['alias_field']);
-		}
-		else {
-			$field_alias = $configuration['alias_field'];
 		}
 			// Now check if the field alias contains a ###LANG### marker
 			// If yes, substitute it with language code taken from RealURL config
@@ -233,7 +229,9 @@ class tx_displaycontroller_realurl {
 		$records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($field_alias, $table, $field_id . '=' . $id);
 
 		// Makes sure records has a default value
-		$records += array(array($field_alias => ''));
+		if (count($records) == 0) {
+			$records = array(array($field_alias => ''));
+		}
 		$name = $records[0][$field_alias];
 
 		// Transform fields into clean alias, using realURL functions

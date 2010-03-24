@@ -237,12 +237,12 @@ $TCA['tt_content']['palettes'][$_EXTKEY . '_2'] = array('showitem' => 'tx_displa
 t3lib_extMgm::addLLrefForTCAdescr('tt_content', 'EXT:' . $_EXTKEY . '/locallang_csh_ttcontent.xml');
 
 	// Register plug-ins (pi1 is cached, pi2 is not cached)
-t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY.'_pi1', t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif'), 'CType');
-t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi2', $_EXTKEY.'_pi2', t3lib_extMgm::extRelPath($_EXTKEY).'ext_typeicon.gif'), 'CType');
+t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY . '_pi1', t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif'), 'CType');
+t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi2', $_EXTKEY . '_pi2', t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif'), 'CType');
 
 	// Declare static TypoScript
 t3lib_extMgm::addStaticFile($_EXTKEY, 'static/', 'Generic display controller');
 
 	// Register the name of the table linking the controller and its components
-$T3_VAR['EXT']['basecontroller']['controller_mm_tables'][] = 'tx_displaycontroller_components_mm';
+$T3_VAR['EXT']['tesseract']['controller_mm_tables'][] = 'tx_displaycontroller_components_mm';
 ?>

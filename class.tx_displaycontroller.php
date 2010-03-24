@@ -2,7 +2,7 @@
 /***************************************************************
 *  Copyright notice
 *
-*  (c) 2008 Francois Suter (Cobweb) <typo3@cobweb.ch>
+*  (c) 2008-2010 Francois Suter (Cobweb) <typo3@cobweb.ch>
 *  All rights reserved
 *
 *  This script is part of the TYPO3 project. The TYPO3 project is
@@ -23,8 +23,7 @@
 ***************************************************************/
 
 require_once(PATH_tslib . 'class.tslib_pibase.php');
-require_once(t3lib_extMgm::extPath('basecontroller', 'class.tx_basecontroller.php'));
-require_once(t3lib_extMgm::extPath('basecontroller', 'lib/class.tx_basecontroller_utilities.php'));
+require_once(t3lib_extMgm::extPath('tesseract', 'lib/class.tx_tesseract_utilities.php'));
 
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
@@ -38,7 +37,6 @@ require_once(t3lib_extMgm::extPath('basecontroller', 'lib/class.tx_basecontrolle
 class tx_displaycontroller extends tslib_pibase {
 	public $prefixId	= 'tx_displaycontroller';		// Same as class name
 	public $extKey		= 'displaycontroller';	// The extension key.
-	protected $controller; // Contains a reference to a controller object
 	protected static $consumer; // Contains a reference to the Data Consumer object
 	protected $passStructure = TRUE; // Set to FALSE if Data Consumer should not receive the structure
 	protected $debug = FALSE; // Debug flag
@@ -64,14 +62,12 @@ class tx_displaycontroller extends tslib_pibase {
 		}
 			// Override standard piVars definition
 		$this->piVars = t3lib_div::GParrayMerged($this->prefixId);
-			// Get an instance of the base controller
-		$this->controller = t3lib_div::makeInstance('tx_basecontroller');
-			// Finally load some additional data into the basecontroller parser
+			// Finally load some additional data into the parser
 		$this->loadParserData();
 	}
 
 	/**
-	 * This method loads additional data into the basecontroller parser, so that it is available for Data Filters
+	 * This method loads additional data into the parser, so that it is available for Data Filters
 	 * and other places where expressions are used
 	 * 
 	 * @return	void
@@ -94,9 +90,9 @@ class tx_displaycontroller extends tslib_pibase {
 			// Add the extra data to the parser and to the TSFE
 		if (count($extraData) > 0) {
 			tx_expressions_parser::setExtraData($extraData);
-			// TODO: this should not stay
-			// This was added so that context can be available in the local TS of the templatedisplay
-			// We must find another solution so that the templatedisplay's TS can use the tx_expressions_parser
+				// TODO: this should not stay
+				// This was added so that context can be available in the local TS of the templatedisplay
+				// We must find another solution so that the templatedisplay's TS can use the tx_expressions_parser
 			$GLOBALS['TSFE']->tesseract = $extraData;
 		}
 			// Load context from the context extension (if installed)
@@ -139,7 +135,7 @@ class tx_displaycontroller extends tslib_pibase {
 				try {
 					$secondaryProviderData = $this->getComponent('provider', 2);
 					try {
-						$secondaryProvider = $this->controller->getDataProvider($secondaryProviderData);
+						$secondaryProvider = $this->getDataProvider($secondaryProviderData);
 						$secondaryProvider->setDataFilter($secondaryFilter);
 					}
 						// Something happened, skip passing the structure to the Data Consumer
@@ -174,7 +170,7 @@ class tx_displaycontroller extends tslib_pibase {
 				// Get the primary data provider, if necessary
 			if ($this->passStructure) {
 				try {
-					$primaryProvider = $this->controller->getDataProvider($primaryProviderData, isset($secondaryProvider) ? $secondaryProvider : null);
+					$primaryProvider = $this->getDataProvider($primaryProviderData, isset($secondaryProvider) ? $secondaryProvider : null);
 					$primaryProvider->setDataFilter($filter);
 						// If the secondary provider exists and the option was chosen
 						// to display everything in the primary provider, no matter what
@@ -197,7 +193,7 @@ class tx_displaycontroller extends tslib_pibase {
 			try {
 				$consumerData = $this->getComponent('consumer');
 				try {
-					self::$consumer = $this->controller->getDataConsumer($consumerData);
+					self::$consumer = $this->getDataConsumer($consumerData);
 						// Pass reference to current object and appropriate TypoScript to consumer
 					self::$consumer->setParentReference($this);
 					$typoscriptConfiguration = isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()]) ? $GLOBALS['TSFE']->tmpl->setup['plugin.'][self::$consumer->getTypoScriptKey()] : array();
@@ -406,7 +402,7 @@ class tx_displaycontroller extends tslib_pibase {
 			// Get the data filter
 		try {
 			$filterData = $this->getComponent('filter', $rank);
-			$datafilter = $this->controller->getDataFilter($filterData);
+			$datafilter = $this->getDataFilter($filterData);
 				// Initialise the filter
 			$filter = $this->initFilter($filterData['uid_foreign']);
 				// Pass the cached filter to the DataFilter
@@ -522,6 +518,78 @@ class tx_displaycontroller extends tslib_pibase {
 			throw new Exception($message, 1265577739);
 		}
 		return $componentData;
+	}
+
+	/**
+	 * This method gets the data provider
+	 * If a secondary provider is defined, it is fed into the first one
+	 *
+	 * @param	array	$providerInfo: information related to a provider, normally the row from the MM table
+	 * @param	object	$secondaryProvider: an instance of an object with a DataProvider interface
+	 * @return	object	object with a DataProvider interface
+	 */
+	public function getDataProvider($providerInfo, tx_tesseract_dataprovider $secondaryProvider = null) {
+			// Get the related data providers
+		$numProviders = count($providerInfo);
+		if ($numProviders == 0) {
+				// No provider, throw exception
+			throw new Exception('No provider was defined', 1269414211);
+		} else {
+				// Get the primary provider
+			$primaryProvider = t3lib_div::makeInstanceService('dataprovider', $providerInfo['tablenames']);
+			$providerData = array('table' => $providerInfo['tablenames'], 'uid' => $providerInfo['uid_foreign']);
+				// NOTE: loadData() may throw an exception, but we just let it bubble up at this point
+			$primaryProvider->loadData($providerData);
+				// Load the primary provider with the data from the secondary provider, if compatible
+			if (isset($secondaryProvider)) {
+				if ($primaryProvider->acceptsDataStructure($secondaryProvider->getProvidedDataStructure())) {
+					$inputDataStructure = $secondaryProvider->getDataStructure();
+						// If the secondary provider returned no list of items, force primary provider to return an empty structure
+					if ($inputDataStructure['count'] == 0) {
+						$primaryProvider->initEmptyDataStructure($inputDataStructure['uniqueTable']);
+
+						// Otherwise pass structure to primary provider
+					} else {
+						$primaryProvider->setDataStructure($inputDataStructure);
+					}
+				}
+					// Providers are not compatible, throw exception
+				else {
+					throw new Exception('Incompatible structures between primary and secondary providers', 1269414231);
+				}
+			}
+			return $primaryProvider;
+		}
+	}
+
+	/**
+	 * This method gets the data consumer
+	 *
+	 * @param	array	$consumer: consumer database record
+	 * @return	object	object with a DataProvider interface
+	 */
+	public function getDataConsumer($consumer) {
+			// Get the related data consumer
+		$consumerObject = t3lib_div::makeInstanceService('dataconsumer', $consumer['tablenames']);
+		$consumerData = array('table' => $consumer['tablenames'], 'uid' => $consumer['uid_foreign']);
+			// NOTE: loadData() may throw an exception, but we just let it bubble up at this point
+		$consumerObject->loadData($consumerData);
+		return $consumerObject;
+	}
+
+	/*
+	 * This method gets the advanced data filter
+	 *
+	 * @param	array	$filter: filter database record
+	 * @return	object	object with a DataFilter interface
+	 */
+	public function getDataFilter($filter) {
+			// Get the related data filter
+		$filterObject = t3lib_div::makeInstanceService('datafilter', $filter['tablenames']);
+		$filterData = array('table' => $filter['tablenames'], 'uid' => $filter['uid_foreign']);
+			// NOTE: loadData() may throw an exception, but we just let it bubble up at this point
+		$filterObject->loadData($filterData);
+		return $filterObject;
 	}
 	
 	/**
