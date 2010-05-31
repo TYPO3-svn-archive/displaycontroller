@@ -8,6 +8,8 @@
 		<languageKey index="default" type="array">
 			<label index="tt_content.CType_pi1">Display Controller (cached)</label>
 			<label index="tt_content.CType_pi2">Display Controller (not cached)</label>
+			<label index="tt_content.CType_pi1.description">Simple FE plugin for displaying output of Tesseract components. Stored into page cache.</label>
+			<label index="tt_content.CType_pi2.description">Simple FE plugin for displaying output of Tesseract components. Not stored into page cache.</label>
 			<label index="tabs.dataobjects">Data Objects</label>
 			<label index="tt_content.tx_displaycontroller_provider">Primary Data Provider</label>
 			<label index="tt_content.tx_displaycontroller_provider2">Secondary Data Provider</label>
