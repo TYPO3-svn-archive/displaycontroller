@@ -61,7 +61,7 @@ class tx_displaycontroller extends tslib_pibase {
 			$this->conf = $conf;
 		}
 			// Override standard piVars definition
-		$this->piVars = t3lib_div::GParrayMerged($this->prefixId);
+		$this->piVars = t3lib_div::_GPmerged($this->prefixId);
 			// Finally load some additional data into the parser
 		$this->loadParserData();
 	}
