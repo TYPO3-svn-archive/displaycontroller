@@ -36,7 +36,8 @@ class tx_displaycontroller_realurl {
 
 	private $postVarSets = 'item';
 	private $defaultValueEmpty = 'unknown';
-	static private $languageConfiguration;
+	static private $languageConfiguration = array();
+	static private $defaultLanguageCode = '';
 
 	/**
 	 * Returns an URL segment
@@ -71,35 +72,35 @@ class tx_displaycontroller_realurl {
 	 */
 	private function decodeAlias($parameters, &$ref) {
 
-		// In addition of the parameters received, we need the before last URL segment
-		// which contains the table alias
+			// In addition of the parameters received, we need the before last URL segment
+			// which contains the table alias
 		$segments = $ref->dirParts;
 		array_pop($segments);
 		$speakingTable = array_pop($segments);
 
-		// select the configuration array
-		// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
+			// select the configuration array
+			// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
 		if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable]) {
 			$table = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable];
-		}
-		else {
+		} else {
 			$table = $speakingTable;
 		}
 
-		// Query the unique alias table to find the primary key
-		$where = "tablename = '$table' AND value_alias = '".$parameters['value']."' AND (expire > " . time() . ' OR expire = 0)';
+			// Query the unique alias table to find the primary key
+		$where = 'tablename = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($table, 'tx_realurl_uniqalias');
+		$where .= ' AND value_alias = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($parameters['value'], 'tx_realurl_uniqalias');
+		$where .= ' AND (expire > ' . time() . ' OR expire = 0)';
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_id', 'tx_realurl_uniqalias', $where);
 		if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) == 0) {
-			return false;
-		}
-		else {
+			return FALSE;
+		} else {
 			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 			return $row['value_id'];
 		}
 	}
 
 	/**
-	 * This method takes the 2 tx_displaycontroller variables (table and showUid) and create a speaking URL out of them
+	 * This method takes the 2 tx_displaycontroller variables (table and showUid) and creates a speaking URL out of them
 	 * by querying the links and information database
 	 *
 	 * @param	array	$parameters: query variables passed by the tx_realurl object
@@ -168,10 +169,10 @@ class tx_displaycontroller_realurl {
 		if (strpos($field_alias, '###LANG###') !== false) {
 				// Check if predictable language setup can be found
 			if (!isset(self::$languageConfiguration)) {
-				self::$languageConfiguration = $this->getLanguageConfiguration($ref->extConf);
+				$this->getLanguageConfiguration($ref->extConf);
 			}
 			$flippedLanguageArray = array_flip(self::$languageConfiguration);
-			$languageCode = (isset($flippedLanguageArray[$lang])) ? $flippedLanguageArray[$lang] : '';
+			$languageCode = (isset($flippedLanguageArray[$lang])) ? $flippedLanguageArray[$lang] : self::$defaultLanguageCode;
 			$field_alias = str_replace('###LANG###', $languageCode, $field_alias);
 		}
 
@@ -179,34 +180,34 @@ class tx_displaycontroller_realurl {
 		$field_id = $configuration['id_field'];
 
 			// Check if an alias already exists for that item
-		$where = "tablename = '$table' AND value_id = '$id'";
+		$where = "tablename = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($table, 'tx_realurl_uniqalias') . " AND value_id = '" . $id . "'";
 			// Add the language as a filter, if not default
 		if (!empty($lang)) {
-			$where .= " AND lang = '".$lang."'";
+			$where .= " AND lang = '" . $lang . "'";
 		}
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, expire, value_alias', 'tx_realurl_uniqalias', $where);
 		if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) { // As alias exists
 			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 
-			// Check if the existing alias has expired
+				// Check if the existing alias has expired
 			if ($row['expire'] < time() && $row['expire'] > 0) {
 
-				// It has expired, updates the record
+					// It has expired, updates the record
 				$cleanAlias = $this->getItemAlias($table, $field_alias, $field_id, $id, $ref);
-				$expireDate = strtotime('+'.($ref->extConf['pagePath']['expireDays']).' days'); // Set new expiry date
+				$expireDate = strtotime('+' . ($ref->extConf['pagePath']['expireDays']) . ' days'); // Set new expiry date
 				$fields = array('tstamp' => time(), 'value_alias' => $cleanAlias, 'expire' => $expireDate);
-				$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_uniqalias', "uid = '".$row['uid']."'", $fields);
-			}
-			else { // It has not expired, return the alias
+				$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_uniqalias', "uid = '" . $row['uid'] . "'", $fields);
+
+				// It has not expired, return the alias
+			} else {
 				$cleanAlias = $row['value_alias'];
 			}
-		}
-		else {
-			// No alias exists, create one and store it
+		} else {
+				// No alias exists, create one and store it
 			$cleanAlias = $this->getItemAlias($table, $field_alias, $field_id, $id, $ref);
 
-			// Stores alias into realURL's unique alias table
-			$expireDate = strtotime('+'.($ref->extConf['pagePath']['expireDays']).' days');
+				// Stores alias into realURL's unique alias table
+			$expireDate = strtotime('+' . ($ref->extConf['pagePath']['expireDays']) . ' days');
 			$fields	 = array('tstamp' => time(), 'tablename' => $table, 'field_alias' => $field_alias, 'field_id' => $field_id, 'value_alias' => $cleanAlias, 'value_id' => $id, 'lang' => $lang, 'expire' => $expireDate);
 			$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_realurl_uniqalias', $fields);
 		}
@@ -225,16 +226,16 @@ class tx_displaycontroller_realurl {
 	 */
 	private function getItemAlias($table, $field_alias, $field_id, $id, $ref) {
 
-		// Which field to query depends on the table
+			// Which field to query depends on the table
 		$records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($field_alias, $table, $field_id . '=' . $id);
 
-		// Makes sure records has a default value
+			// Makes sure records has a default value
 		if (count($records) == 0) {
 			$records = array(array($field_alias => ''));
 		}
 		$name = $records[0][$field_alias];
 
-		// Transform fields into clean alias, using realURL functions
+			// Transform fields into clean alias, using realURL functions
 		$name = str_replace("'", '', stripslashes($name)); // First remove single quotes
 		$config = array('useUniqueCache_conf' => array('strtolower' => 1, 'spaceCharacter' => '-'));
 		$alias = $ref->lookUp_cleanAlias($config, $name);
@@ -243,7 +244,7 @@ class tx_displaycontroller_realurl {
 			$alias = $this->defaultValueEmpty;
 		}
 
-		// Makes sure the alias is unique
+			// Makes sure the alias is unique
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $alias . '"');
 		$loop = 1;
 
@@ -263,28 +264,25 @@ class tx_displaycontroller_realurl {
 	 * This method tries to find a language configuration inside the RealURL configuration
 	 * 
 	 * @param	array	$conf: RealURL configuration
-	 * @return	array	Mapping of language codes to language id's
 	 */
 	private function getLanguageConfiguration($conf) {
 		$languageConfig = array();
 			// First check if configuration is in a standard place
-		if (isset($conf['preVars']['lang']['valueMap'])) {
-			$languageConfig = $conf['preVars']['lang']['valueMap'];
-		}
+		if (isset($conf['preVars']['lang'])) {
+			$languageConfig = $conf['preVars']['lang'];
+
 			// If not search for it inside the whole configuration
 			// The search looks in preVars,...
 			// and tries to find a value map for a variable whose name matches
 			// the declared language variable's name in the pagePath setup
-		else {
+		} else {
 			$langVarName = $conf['pagePath']['languageGetVar'];
 				// First search among the preVars
 			if (isset($conf['preVars'])) {
 				foreach ($conf['preVars'] as $configuration) {
 					if (isset($configuration['GETvar']) && $configuration['GETvar'] == $langVarName) {
-						if (isset($configuration['valueMap'])) {
-							$languageConfig = $configuration['valueMap'];
-							break;
-						}
+						$languageConfig = $configuration;
+						break;
 					}
 				}
 			}
@@ -292,7 +290,12 @@ class tx_displaycontroller_realurl {
 			// NOTE: does that make sense?
 			// TODO: implement if it becomes necessary
 		}
-		return $languageConfig;
+		if (isset($languageConfig['valueMap'])) {
+			self::$languageConfiguration = $languageConfig['valueMap'];
+		}
+		if (isset($languageConfig['valueDefault'])) {
+			self::$defaultLanguageCode = $languageConfig['valueDefault'];
+		}
 	}
 
 	/*
