@@ -152,7 +152,7 @@ class tx_displaycontroller_realurl {
 			// Make sure the language variable is set
 		$lang = 0;
 		if (isset($ref->extConf['pagePath']['languageGetVar']) && isset($parameters[$ref->extConf['pagePath']['languageGetVar']])) {
-			$lang = $parameters[$ref->extConf['pagePath']['languageGetVar']];
+			$lang = intval($parameters[$ref->extConf['pagePath']['languageGetVar']]);
 		}
 
 			// Get the id parameter
@@ -161,12 +161,12 @@ class tx_displaycontroller_realurl {
 			// Get the name of the field to fetch the alias from
 			// Check if field alias contains a curly brace, if yes, call the expressions parser
 		$field_alias = $configuration['alias_field'];
-		if (strpos($configuration['alias_field'], '{') !== false) {
+		if (strpos($configuration['alias_field'], '{') !== FALSE) {
 			$field_alias = tx_expressions_parser::evaluateString($configuration['alias_field']);
 		}
 			// Now check if the field alias contains a ###LANG### marker
 			// If yes, substitute it with language code taken from RealURL config
-		if (strpos($field_alias, '###LANG###') !== false) {
+		if (strpos($field_alias, '###LANG###') !== FALSE) {
 				// Check if predictable language setup can be found
 			if (!isset(self::$languageConfiguration)) {
 				$this->getLanguageConfiguration($ref->extConf);
