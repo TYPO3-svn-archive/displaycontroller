@@ -170,11 +170,9 @@ class tx_displaycontroller_realurl {
 				// Check if predictable language setup can be found
 			if (!isset(self::$languageConfiguration)) {
 				$this->getLanguageConfiguration($ref->extConf);
-t3lib_div::debug(self::$languageConfiguration, 'Language configuration');
 			}
 			$languageCode = (isset(self::$languageConfiguration[$lang])) ? self::$languageConfiguration[$lang] : self::$defaultLanguageCode;
 			$field_alias = str_replace('###LANG###', $languageCode, $field_alias);
-t3lib_div::debug(array('lang' => $lang, 'languageCode' => $languageCode, 'field_alias' => $field_alias));
 		}
 
 			// Get the name of the field that contains the id's
