@@ -36,8 +36,8 @@ class tx_displaycontroller_realurl {
 
 	private $postVarSets = 'item';
 	private $defaultValueEmpty = 'unknown';
-	static private $languageConfiguration = array();
-	static private $defaultLanguageCode = '';
+	static private $languageConfiguration;
+	static private $defaultLanguageCode;
 
 	/**
 	 * Returns an URL segment
@@ -170,10 +170,11 @@ class tx_displaycontroller_realurl {
 				// Check if predictable language setup can be found
 			if (!isset(self::$languageConfiguration)) {
 				$this->getLanguageConfiguration($ref->extConf);
+t3lib_div::debug(self::$languageConfiguration, 'Language configuration');
 			}
-			$flippedLanguageArray = array_flip(self::$languageConfiguration);
-			$languageCode = (isset($flippedLanguageArray[$lang])) ? $flippedLanguageArray[$lang] : self::$defaultLanguageCode;
+			$languageCode = (isset(self::$languageConfiguration[$lang])) ? self::$languageConfiguration[$lang] : self::$defaultLanguageCode;
 			$field_alias = str_replace('###LANG###', $languageCode, $field_alias);
+t3lib_div::debug(array('lang' => $lang, 'languageCode' => $languageCode, 'field_alias' => $field_alias));
 		}
 
 			// Get the name of the field that contains the id's
@@ -291,10 +292,14 @@ class tx_displaycontroller_realurl {
 			// TODO: implement if it becomes necessary
 		}
 		if (isset($languageConfig['valueMap'])) {
-			self::$languageConfiguration = $languageConfig['valueMap'];
+			self::$languageConfiguration = array_flip($languageConfig['valueMap']);
+		} else {
+			self::$languageConfiguration = array();
 		}
 		if (isset($languageConfig['valueDefault'])) {
 			self::$defaultLanguageCode = $languageConfig['valueDefault'];
+		} else {
+			self::$defaultLanguageCode = '';
 		}
 	}
 
