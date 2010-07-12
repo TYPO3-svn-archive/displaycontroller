@@ -224,7 +224,7 @@ t3lib_extMgm::addTCAcolumns('tt_content', $tempColumns, 1);
 	// Define showitem property for both plug-ins
 $showItem = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2,linkToTop;;;;3-3-3';
 $showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2';
-$showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime, fe_group';
+$showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime';
 
 $TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $showItem;
 $TCA['tt_content']['types'][$_EXTKEY . '_pi2']['showitem'] = $showItem;
