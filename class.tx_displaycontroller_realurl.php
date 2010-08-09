@@ -180,10 +180,8 @@ class tx_displaycontroller_realurl {
 
 			// Check if an alias already exists for that item
 		$where = "tablename = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($table, 'tx_realurl_uniqalias') . " AND value_id = '" . $id . "'";
-			// Add the language as a filter, if not default
-		if (!empty($lang)) {
-			$where .= " AND lang = '" . $lang . "'";
-		}
+			// Add the language as a filter
+		$where .= " AND lang = '" . $lang . "'";
 		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, expire, value_alias', 'tx_realurl_uniqalias', $where);
 		if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) { // As alias exists
 			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
