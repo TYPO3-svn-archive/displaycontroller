@@ -24,6 +24,7 @@
 
 require_once(PATH_tslib . 'class.tslib_pibase.php');
 require_once(t3lib_extMgm::extPath('tesseract', 'lib/class.tx_tesseract_utilities.php'));
+require_once(t3lib_extMgm::extPath('tesseract', 'interfaces/class.tx_tesseract_datacontroller_output.php'));
 
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
@@ -34,7 +35,7 @@ require_once(t3lib_extMgm::extPath('tesseract', 'lib/class.tx_tesseract_utilitie
  *
  * $Id$
  */
-class tx_displaycontroller extends tslib_pibase {
+class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacontroller_output {
 	public $prefixId	= 'tx_displaycontroller';		// Same as class name
 	public $extKey		= 'displaycontroller';	// The extension key.
 	protected static $consumer; // Contains a reference to the Data Consumer object
@@ -606,7 +607,7 @@ class tx_displaycontroller extends tslib_pibase {
 		return $content;
 	}
 
-// Getters and setters
+// tx_tesseract_datacontroller_output interface methods
 
 	/**
 	 * This method returns the plug-in's prefix id
