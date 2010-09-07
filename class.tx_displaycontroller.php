@@ -96,17 +96,6 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 				// We must find another solution so that the templatedisplay's TS can use the tx_expressions_parser
 			$GLOBALS['TSFE']->tesseract = $extraData;
 		}
-			// Load context from the context extension (if installed)
-			// This is necessary when the displaycontroller is called as a USER_INT,
-			// because the loader of the context extension itself has not been called in a cached page
-			// The only drawback is that the context is loaded twice if the page is not in cache,
-			// but since this operation doesn't cost much it's acceptable to do it twice
-			// (and it doesn't break anything)
-		if (!$this->pi_checkCHash && t3lib_extMgm::isLoaded('context')) {
-			require_once(t3lib_extMgm::extPath('context', 'class.tx_context.php'));
-			$context = t3lib_div::makeInstance('tx_context');
-			$context->handleContext();
-		}
 	}
 
 	/**
