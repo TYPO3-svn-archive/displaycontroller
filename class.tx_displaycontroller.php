@@ -23,8 +23,6 @@
 ***************************************************************/
 
 require_once(PATH_tslib . 'class.tslib_pibase.php');
-require_once(t3lib_extMgm::extPath('tesseract', 'lib/class.tx_tesseract_utilities.php'));
-require_once(t3lib_extMgm::extPath('tesseract', 'interfaces/class.tx_tesseract_datacontroller_output.php'));
 
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
