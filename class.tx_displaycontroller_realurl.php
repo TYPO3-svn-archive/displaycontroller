@@ -34,13 +34,14 @@
  */
 class tx_displaycontroller_realurl {
 
-	private $postVarSets = 'item';
-	private $defaultValueEmpty = 'unknown';
-	static private $languageConfiguration;
-	static private $defaultLanguageCode;
+	protected $postVarSets = 'item';
+	protected $defaultValueEmpty = 'unknown';
+	static protected $languageConfiguration;
+	static protected $defaultLanguageCode;
 
 	/**
-	 * Returns an URL segment
+	 * This method performs either encoding or decoding to/from a speaking URL segment
+	 * and returns the relevant information
 	 *
 	 * @param	array	$parameters: 'pObj' => 'tx_realurl', 'value' -> '1' (pid) , 'decodeAlias' => OR 'encodeAlias' =>
 	 * @param	object	$ref
@@ -51,12 +52,10 @@ class tx_displaycontroller_realurl {
 			$this->postVarSets = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_displaycontroller.']['detailView.']['postVarSets'];
 		}
 		
-		#if (!is_int($parameters['tx_displaycontroller[showUid]'])) {echo $parameters['tx_displaycontroller[showUid]']; return;};
 		if (!empty($parameters['value'])) {
 			if ($parameters['decodeAlias']) {
 				return $this->decodeAlias($parameters, $ref);
-			}
-			else {
+			} else {
 				return $this->encodeAlias($ref->orig_paramKeyValues, $ref);
 			}
 		}
@@ -70,7 +69,7 @@ class tx_displaycontroller_realurl {
 	 *
 	 * @return	integer		primary key
 	 */
-	private function decodeAlias($parameters, &$ref) {
+	protected function decodeAlias($parameters, &$ref) {
 
 			// In addition of the parameters received, we need the before last URL segment
 			// which contains the table alias
@@ -78,7 +77,7 @@ class tx_displaycontroller_realurl {
 		array_pop($segments);
 		$speakingTable = array_pop($segments);
 
-			// select the configuration array
+			// Select the configuration array
 			// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
 		if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable]) {
 			$table = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable];
@@ -108,45 +107,44 @@ class tx_displaycontroller_realurl {
 	 *
 	 * @return	string	speaking URL
 	 */
-	private function encodeAlias($parameters, &$ref) {
+	protected function encodeAlias($parameters, &$ref) {
 
-		// Error handling
+			// Error handling
 		if (empty($parameters['tx_displaycontroller[table]'])) {
-			$this->throwException('Error: tx_displaycontroller[table] is empty.');
+			throw new tx_tesseract_exception('Error: tx_displaycontroller[table] is empty.', 1284363631);
 		}
-
 		if (empty($parameters['tx_displaycontroller[showUid]'])) {
-			$this->throwException('Error: tx_displaycontroller[showUid] is empty.');
+			throw new tx_tesseract_exception('Error: tx_displaycontroller[showUid] is empty.', 1284363668);
 		}
 
-		// Translates speaking URL table name to database table name
+			// Translates speaking URL table name to database table name
 		$table = $parameters['tx_displaycontroller[table]'];
 		
-		// Check if the table needs to be translated
+			// Check if the table needs to be translated
 		if (isset($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$table])) {
 			$table = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$table];
 		}
 
-		// Default value;
+			// Default value;
 		$configurations = array();
 
-		// select the configuration array
-		// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
+			// Select the configuration array
+			// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
 		if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.']) {
 			$configurations = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.'];
 		}
 
-		// Finds out the right configuration array containing table, alias_field, alias_id (possibly)
+			// Finds out the right configuration array containing table, alias_field, alias_id (possibly)
 		if (empty($configurations[$table])) {
-			// If no configuration was foune throw an error
-			$this->throwException('Error realurl configuration: no configuration found for table ' . $table);
+				// If no configuration was found throw an error
+			throw new tx_tesseract_exception('Error realurl configuration: no configuration found for table ' . $table, 1284363713);
 		}
 
 		$configuration = $configurations[$table];
-		$configuration += array('id_field' => 'uid');
+		$configuration['id_field'] = 'uid';
 
 		if (!isset($configuration['alias_field'])) {
-			$this->throwException('Error realurl configuration: unknown alias_field for table ' . $table);
+			throw new tx_tesseract_exception('Error realurl configuration: unknown alias_field for table ' . $table, 1284363751);
 		}
 
 			// Make sure the language variable is set
@@ -221,7 +219,7 @@ class tx_displaycontroller_realurl {
 	 *
 	 * @return	string		cleaned up alias for the item
 	 */
-	private function getItemAlias($table, $field_alias, $field_id, $id, $ref) {
+	protected function getItemAlias($table, $field_alias, $field_id, $id, $ref) {
 
 			// Which field to query depends on the table
 		$records = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows($field_alias, $table, $field_id . '=' . $id);
@@ -241,20 +239,41 @@ class tx_displaycontroller_realurl {
 			$alias = $this->defaultValueEmpty;
 		}
 
-			// Makes sure the alias is unique
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $alias . '"');
-		$loop = 1;
-
-		while($GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0 && $loop < 5000) {
-			$_alias = $alias . $config['useUniqueCache_conf']['spaceCharacter'] . $loop;
-			$loop ++;
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $_alias . '"');
-		}
-
-		if (isset($_alias)) {
-			$alias = $_alias;
-		}
+			// Check alias unicity
+		$alias = $this->checkUniqueAlias($alias, $config['useUniqueCache_conf']['spaceCharacter']);
 		return $alias;
+	}
+
+	/**
+	 * This method is used to check whether a given alias is unique or not
+	 * If not it will append stuff to the alias to make it unique
+	 *
+	 * @param	string	$alias: alias to check
+	 * @param	string	$separator: character used instead of white space inside speaking URLs
+	 * @return	string	The unique alias
+	 */
+	protected function checkUniqueAlias($alias, $separator) {
+		$uniqueAlias = $alias;
+		$hasUniqueAlias = FALSE;
+		$loop = 1;
+		do {
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $uniqueAlias . '"');
+			if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) == 0) {
+				$hasUniqueAlias = TRUE;
+				break;
+			} else {
+				$uniqueAlias = $alias . $separator . $loop;
+				$loop++;
+			}
+		} while (!$hasUniqueAlias && $loop < 3);
+
+			// If everything failed, append short hash based on microtime
+			// (we don't do this before, because it's nicer if we can manage to append
+			// only a few numbers)
+		if (!$hasUniqueAlias) {
+			$uniqueAlias = $alias . $separator . t3lib_div::shortMD5(microtime());
+		}
+		return $uniqueAlias;
 	}
 
 	/**
@@ -262,7 +281,7 @@ class tx_displaycontroller_realurl {
 	 * 
 	 * @param	array	$conf: RealURL configuration
 	 */
-	private function getLanguageConfiguration($conf) {
+	protected function getLanguageConfiguration($conf) {
 		$languageConfig = array();
 			// First check if configuration is in a standard place
 		if (isset($conf['preVars']['lang'])) {
@@ -297,15 +316,6 @@ class tx_displaycontroller_realurl {
 		} else {
 			self::$defaultLanguageCode = '';
 		}
-	}
-
-	/*
-	 * Throws an error message catched by the controller (e.g. displaycontroller)
-	 *
-	 * @param	string	$message: the message outputed
-	 */
-	private function throwException($message) {
-		throw new Exception('<div style="color:red">' . $message . '</div>');
 	}
 }
 ?>
