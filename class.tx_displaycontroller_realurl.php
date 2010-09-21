@@ -301,7 +301,7 @@ class tx_displaycontroller_realurl {
 			// If the alias is not unique, try making it unique by appending a number
 			// Try a maximum of 100 times
 		do {
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $GLOBALS['TYPO3_DB']->fullQuoteStr($uniqueAlias, 'tx_realurl_uniqalias') . '"');
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = ' . $GLOBALS['TYPO3_DB']->fullQuoteStr($uniqueAlias, 'tx_realurl_uniqalias'));
 			if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) == 0) {
 				$hasUniqueAlias = TRUE;
 				break;
