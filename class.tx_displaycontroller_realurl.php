@@ -34,10 +34,21 @@
  */
 class tx_displaycontroller_realurl {
 
+	protected $extKey = 'displaycontroller';
 	protected $postVarSets = 'item';
 	protected $defaultValueEmpty = 'unknown';
+	/**
+	 * Extension configuration
+	 * 
+	 * @var	array
+	 */
+	protected $configuration = array();
 	static protected $languageConfiguration;
 	static protected $defaultLanguageCode;
+
+	public function __construct() {
+		$this->configuration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
+	}
 
 	/**
 	 * This method performs either encoding or decoding to/from a speaking URL segment
@@ -76,13 +87,11 @@ class tx_displaycontroller_realurl {
 		$segments = $ref->dirParts;
 		array_pop($segments);
 		$speakingTable = array_pop($segments);
+		$table = $speakingTable;
 
-			// Select the configuration array
-			// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
+			// Check if the table is a "speaking" name mapped to a real table name
 		if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable]) {
 			$table = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$speakingTable];
-		} else {
-			$table = $speakingTable;
 		}
 
 			// Query the unique alias table to find the primary key
@@ -108,103 +117,136 @@ class tx_displaycontroller_realurl {
 	 * @return	string	speaking URL
 	 */
 	protected function encodeAlias($parameters, &$ref) {
+		$cleanAlias = '';
+		$table = '';
+		$id = 0;
 
 			// Error handling
+			// Get the table name from the GET/POST parameters
 		if (empty($parameters['tx_displaycontroller[table]'])) {
-			throw new tx_tesseract_exception('Error: tx_displaycontroller[table] is empty.', 1284363631);
-		}
-		if (empty($parameters['tx_displaycontroller[showUid]'])) {
-			throw new tx_tesseract_exception('Error: tx_displaycontroller[showUid] is empty.', 1284363668);
-		}
-
-			// Translates speaking URL table name to database table name
-		$table = $parameters['tx_displaycontroller[table]'];
-		
-			// Check if the table needs to be translated
-		if (isset($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$table])) {
-			$table = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$table];
-		}
-
-			// Default value;
-		$configurations = array();
-
-			// Select the configuration array
-			// Defines the $field_id. The value is going to be used in a SQL statement WHERE $field_id = showUid
-		if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.']) {
-			$configurations = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.'];
-		}
-
-			// Finds out the right configuration array containing table, alias_field, alias_id (possibly)
-		if (empty($configurations[$table])) {
-				// If no configuration was found throw an error
-			throw new tx_tesseract_exception('Error realurl configuration: no configuration found for table ' . $table, 1284363713);
-		}
-
-		$configuration = $configurations[$table];
-		$configuration['id_field'] = 'uid';
-
-		if (!isset($configuration['alias_field'])) {
-			throw new tx_tesseract_exception('Error realurl configuration: unknown alias_field for table ' . $table, 1284363751);
-		}
-
-			// Make sure the language variable is set
-		$lang = 0;
-		if (isset($ref->extConf['pagePath']['languageGetVar']) && isset($parameters[$ref->extConf['pagePath']['languageGetVar']])) {
-			$lang = intval($parameters[$ref->extConf['pagePath']['languageGetVar']]);
-		}
-
-			// Get the id parameter
-		$id = intval($parameters['tx_displaycontroller[showUid]']);
-
-			// Get the name of the field to fetch the alias from
-			// Check if field alias contains a curly brace, if yes, call the expressions parser
-		$field_alias = $configuration['alias_field'];
-		if (strpos($configuration['alias_field'], '{') !== FALSE) {
-			$field_alias = tx_expressions_parser::evaluateString($configuration['alias_field']);
-		}
-			// Now check if the field alias contains a ###LANG### marker
-			// If yes, substitute it with language code taken from RealURL config
-		if (strpos($field_alias, '###LANG###') !== FALSE) {
-				// Check if predictable language setup can be found
-			if (!isset(self::$languageConfiguration)) {
-				$this->getLanguageConfiguration($ref->extConf);
-			}
-			$languageCode = (isset(self::$languageConfiguration[$lang])) ? self::$languageConfiguration[$lang] : self::$defaultLanguageCode;
-			$field_alias = str_replace('###LANG###', $languageCode, $field_alias);
-		}
-
-			// Get the name of the field that contains the id's
-		$field_id = $configuration['id_field'];
-
-			// Check if an alias already exists for that item
-		$where = "tablename = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($table, 'tx_realurl_uniqalias') . " AND value_id = '" . $id . "'";
-			// Add the language as a filter
-		$where .= " AND lang = '" . $lang . "'";
-		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, expire, value_alias', 'tx_realurl_uniqalias', $where);
-		if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) { // As alias exists
-			$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-
-				// Check if the existing alias has expired
-			if ($row['expire'] < time() && $row['expire'] > 0) {
-
-					// It has expired, updates the record
-				$cleanAlias = $this->getItemAlias($table, $field_alias, $field_id, $id, $ref);
-				$expireDate = strtotime('+' . ($ref->extConf['pagePath']['expireDays']) . ' days'); // Set new expiry date
-				$fields = array('tstamp' => time(), 'value_alias' => $cleanAlias, 'expire' => $expireDate);
-				$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_uniqalias', "uid = '" . $row['uid'] . "'", $fields);
-
-				// It has not expired, return the alias
-			} else {
-				$cleanAlias = $row['value_alias'];
+			if ($this->configuration['debug'] || TYPO3_DLOG) {
+				t3lib_div::devLog('tx_displaycontroller[table] is empty', $this->extKey, 3, $parameters);
 			}
 		} else {
-				// No alias exists, create one and store it
-			$cleanAlias = $this->getItemAlias($table, $field_alias, $field_id, $id, $ref);
+			$table = $parameters['tx_displaycontroller[table]'];
+		}
+			// Get the record's id from the GET/POST parameters
+		if (empty($parameters['tx_displaycontroller[showUid]'])) {
+			if ($this->configuration['debug'] || TYPO3_DLOG) {
+				t3lib_div::devLog('tx_displaycontroller[showUid] is empty', $this->extKey, 3, $parameters);
+			}
+		} else {
+			$id = intval($parameters['tx_displaycontroller[showUid]']);
+		}
 
-				// Stores alias into realURL's unique alias table
-			$expireDate = strtotime('+' . ($ref->extConf['pagePath']['expireDays']) . ' days');
-			$fields	 = array('tstamp' => time(), 'tablename' => $table, 'field_alias' => $field_alias, 'field_id' => $field_id, 'value_alias' => $cleanAlias, 'value_id' => $id, 'lang' => $lang, 'expire' => $expireDate);
-			$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_realurl_uniqalias', $fields);
+			// If the table parameter is not empty, try to get its configuration
+		$configuration = array();
+		if (!empty($table)) {
+				// Check if the table needs to be translated
+				// If not, it is used as is
+			if (isset($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$table])) {
+				$table = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][0]['valueMap'][$table];
+			}
+
+				// Get the configurations for all tables
+				// The configurations contain which DB field to get the alias from
+			$configurations = array();
+			if ($ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.']) {
+				$configurations = $ref->extConf['postVarSets']['_DEFAULT'][$this->postVarSets][1]['userFunc.'];
+			}
+
+				// Find out the right configuration for the table
+			if (empty($configurations[$table])) {
+					// If no configuration, log the error
+				if ($this->configuration['debug'] || TYPO3_DLOG) {
+					t3lib_div::devLog(sprintf('No alias configuration found for table %s, falling back on default (uid)', $table), $this->extKey, 2, $configurations);
+				}
+					// Fall back on default configuration
+					// NOTE: uid hard-coded, it could be made configurable if need arises
+				$configuration = array('id_field' => 'uid', 'alias_field' => 'uid');
+			} else {
+				$configuration = $configurations[$table];
+					// NOTE: uid hard-coded, it could be made configurable if need arises
+				$configuration['id_field'] = 'uid';
+
+					// Issue an error if no alias field was found
+				if (empty($configuration['alias_field'])) {
+					if ($this->configuration['debug'] || TYPO3_DLOG) {
+						t3lib_div::devLog(sprintf('Undefined alias field for table %1$s, using %2$s instead', $table, $configuration['id_field']), $this->extKey, 2, $configuration);
+					}
+					$configuration['alias_field'] = $configuration['id_field'];
+				}
+			}
+		}
+
+			// If both table and id are defined, continue with assembling the alias based on the found configuration
+		if (!empty($id) && !empty($table)) {
+
+				// Make sure the language variable is set
+			$lang = 0;
+			if (isset($ref->extConf['pagePath']['languageGetVar']) && isset($parameters[$ref->extConf['pagePath']['languageGetVar']])) {
+				$lang = intval($parameters[$ref->extConf['pagePath']['languageGetVar']]);
+			}
+
+				// Get the name of the field to fetch the alias from
+				// Check if field alias contains a curly brace, if yes, call the expressions parser
+			$field_alias = $configuration['alias_field'];
+			if (strpos($configuration['alias_field'], '{') !== FALSE) {
+				$field_alias = tx_expressions_parser::evaluateString($configuration['alias_field']);
+			}
+				// Now check if the field alias contains a ###LANG### marker
+				// If yes, substitute it with language code taken from RealURL config
+			if (strpos($field_alias, '###LANG###') !== FALSE) {
+					// Check if predictable language setup can be found
+				if (!isset(self::$languageConfiguration)) {
+					$this->getLanguageConfiguration($ref->extConf);
+				}
+				$languageCode = (isset(self::$languageConfiguration[$lang])) ? self::$languageConfiguration[$lang] : self::$defaultLanguageCode;
+				$field_alias = str_replace('###LANG###', $languageCode, $field_alias);
+			}
+
+				// Get the name of the field that contains the id's
+			$field_id = $configuration['id_field'];
+
+				// Check if an alias already exists for that item
+			$where = "tablename = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($table, 'tx_realurl_uniqalias') . " AND value_id = '" . $id . "'";
+				// Add the language as a filter
+			$where .= " AND lang = '" . $lang . "'";
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('uid, expire, value_alias', 'tx_realurl_uniqalias', $where);
+			if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) { // As alias exists
+				$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+
+					// Check if the existing alias has expired
+				if ($row['expire'] < time() && $row['expire'] > 0) {
+
+						// It has expired, updates the record
+					$cleanAlias = $this->getItemAlias($table, $field_alias, $field_id, $id, $ref);
+					$fields = array('tstamp' => time(), 'value_alias' => $cleanAlias);
+						// Set new expiry date, if defined
+					if (!empty($ref->extConf['pagePath']['expireDays'])) {
+						$expireDate = strtotime('+' . ($ref->extConf['pagePath']['expireDays']) . ' days');
+						$fields['expire'] = $expireDate;
+					}
+					$GLOBALS['TYPO3_DB']->exec_UPDATEquery('tx_realurl_uniqalias', "uid = '" . $row['uid'] . "'", $fields);
+
+					// It has not expired, return the alias
+				} else {
+					$cleanAlias = $row['value_alias'];
+				}
+			} else {
+					// No alias exists, create one and store it
+				$cleanAlias = $this->getItemAlias($table, $field_alias, $field_id, $id, $ref);
+
+					// Stores alias into realURL's unique alias table
+				$expireDate = strtotime('+' . ($ref->extConf['pagePath']['expireDays']) . ' days');
+				$fields	 = array('tstamp' => time(), 'tablename' => $table, 'field_alias' => $field_alias, 'field_id' => $field_id, 'value_alias' => $cleanAlias, 'value_id' => $id, 'lang' => $lang, 'expire' => $expireDate);
+				$GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_realurl_uniqalias', $fields);
+			}
+
+			// Some information was missing for creating a proper alias
+			// (table name, id, configuration), return an empty alias
+		} else {
+			$cleanAlias = '';
 		}
 		return $cleanAlias;
 	}
@@ -256,8 +298,10 @@ class tx_displaycontroller_realurl {
 		$uniqueAlias = $alias;
 		$hasUniqueAlias = FALSE;
 		$loop = 1;
+			// If the alias is not unique, try making it unique by appending a number
+			// Try a maximum of 100 times
 		do {
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $uniqueAlias . '"');
+			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('value_alias', 'tx_realurl_uniqalias', 'value_alias = "' . $GLOBALS['TYPO3_DB']->fullQuoteStr($uniqueAlias, 'tx_realurl_uniqalias') . '"');
 			if ($GLOBALS['TYPO3_DB']->sql_num_rows($res) == 0) {
 				$hasUniqueAlias = TRUE;
 				break;
@@ -265,7 +309,7 @@ class tx_displaycontroller_realurl {
 				$uniqueAlias = $alias . $separator . $loop;
 				$loop++;
 			}
-		} while (!$hasUniqueAlias && $loop < 3);
+		} while (!$hasUniqueAlias && $loop < 100);
 
 			// If everything failed, append short hash based on microtime
 			// (we don't do this before, because it's nicer if we can manage to append

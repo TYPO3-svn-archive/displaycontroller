@@ -6,6 +6,7 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
+			<label index="config_debug">Debug: Turn debugging on or off. Requires a devlog-enabling extension (e.g. "devlog").</label>
 			<label index="pi1_title">Display Controller (cached)</label>
 			<label index="pi1_plus_wiz_description">Create a fully-cached Display Controller.</label>
 			<label index="pi2_title">Display Controller (not cached)</label>

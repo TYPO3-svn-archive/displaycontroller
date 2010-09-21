@@ -1,0 +1,2 @@
+# cat=basic/enable/; type=boolean; label=LLL:EXT:displaycontroller/locallang.xml:config_debug
+debug = 0
