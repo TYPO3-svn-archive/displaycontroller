@@ -11,8 +11,8 @@
 ########################################################################
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'Display Controller',
-	'description' => 'This extension is used to get data from different data models and dispatch it to various views',
+	'title' => 'Standard Controller - Tesseract project',
+	'description' => 'This extension manages relations between Tesseract components and produces output in the FE. More info on http://www.typo3-tesseract.com/',
 	'category' => 'plugin',
 	'author' => 'Francois Suter (Cobweb)',
 	'author_email' => 'typo3@cobweb.ch',

@@ -1,2 +1,3 @@
+This extension is a FE plugin that manages relations between Tesseract components and produces output in the FE.
 
-Feel free to add some documentation or simply add a link to the online manual.
+Refer to the manual for more information.
