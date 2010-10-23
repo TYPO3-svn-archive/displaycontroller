@@ -54,9 +54,8 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 			// Merge the configuration of the pi* plugin with the general configuration
 			// defined with plugin.tx_displaycontroller (if defined)
 		if (isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'])) {
-			$this->conf = t3lib_div::array_merge_recursive_overrule($conf, $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.']);
-		}
-		else {
+			$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'], $conf);
+		} else {
 			$this->conf = $conf;
 		}
 			// Override standard piVars definition
@@ -68,7 +67,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	/**
 	 * This method loads additional data into the parser, so that it is available for Data Filters
 	 * and other places where expressions are used
-	 * 
+	 *
 	 * @return	void
 	 */
 	protected function loadParserData() {
@@ -277,7 +276,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 
 	/**
 	 * This method is used to return a clean, empty filter
-	 * 
+	 *
 	 * @return	array	Empty filter structure
 	 */
 	protected function getEmptyFilter() {
@@ -472,7 +471,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	/**
 	 * This method is used to retrieve any of the components related to the controller
 	 * An exception is thrown if none is found
-	 * 
+	 *
 	 * @param	string	$component: type of component (provider, consumer, filter)
 	 * @param	integer	$rank: level of the component (1 = primary, 2 = secondary)
 	 * @return	array	Database record from the MM-table linking the controller to its components
@@ -579,7 +578,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		$filterObject->loadData($filterData);
 		return $filterObject;
 	}
-	
+
 	/**
 	 * This method can be called instead of main() for rendering nested elements of a data structure
 	 * It avoids the full initialisation by refering to the consumer stored in a static variable
@@ -608,7 +607,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 }
 
 
-   
+
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/displaycontroller/class.tx_displaycontroller.php'])	{
 	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/displaycontroller/class.tx_displaycontroller.php']);
 }
