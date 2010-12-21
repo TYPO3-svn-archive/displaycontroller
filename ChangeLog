@@ -1,6 +1,7 @@
 2010-12-20 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
-	* Changed consumer member variable from static to "normal" in the displaycontroller workflow, resolves #11390
+	* Changed consumer member variable from static to "normal" in the displaycontroller workflow, resolves #11390 (thanks to Adrien Crivelli)
+	* Removed tx_displaycontroller::sub() method, resolves #11624
 
 2010-12-20 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 

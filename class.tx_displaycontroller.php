@@ -579,20 +579,6 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		return $filterObject;
 	}
 
-	/**
-	 * This method can be called instead of main() for rendering nested elements of a data structure
-	 * It avoids the full initialisation by refering to the consumer stored in a static variable
-	 *
-	 * @param	string		$content: the plugin's content
-	 * @param	array		$conf: limited TS configuration for the rendering of the nested element
-	 * @return	string		The content to display on the website
-	 */
-	public function sub($content, $conf) {
-		$this->consumer->setTypoScript($conf);
-		$content = $this->consumer->getSubResult();
-		return $content;
-	}
-
 // tx_tesseract_datacontroller_output interface methods
 
 	/**
