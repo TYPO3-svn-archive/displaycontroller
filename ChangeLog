@@ -1,3 +1,7 @@
+2011-05-16 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Corrected handling of components relations in workspaces, resolves #26828
+
 2011-03-20 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Removed dependency on extensions load order for allowed property, resolves #13929

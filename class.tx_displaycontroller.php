@@ -477,30 +477,24 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 * @return	array	Database record from the MM-table linking the controller to its components
 	 */
 	protected function getComponent($component, $rank = 1) {
-		$componentData = array();
-		$hasComponent = FALSE;
+			// Assemble base WHERE clause
 		$whereClause = "component = '" . $component . "' AND rank = '" . $rank . "'";
-			// If the content element has been localized, check for component
-			// as related to localized uid
-		if (!empty($this->cObj->data['_LOCALIZED_UID'])) {
-			$where = $whereClause . " AND uid_local = '" . $this->cObj->data['_LOCALIZED_UID'] . "'";
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_components_mm', $where);
-			if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
-				$componentData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				$hasComponent = TRUE;
-			}
+			// Select the right uid for building the relation
+			// If a _ORIG_uid is defined (i.e. we're in a workspace), use it preferentially
+			// Otherwise, take the localized uid (i.e. we're using a translation), if it exists
+		$referenceUid = $this->cObj->data['uid'];
+		if (!empty($this->cObj->data['_ORIG_uid'])) {
+			$referenceUid = $this->cObj->data['_ORIG_uid'];
+		} elseif (!empty($this->cObj->data['_LOCALIZED_UID'])) {
+			$referenceUid = $this->cObj->data['_LOCALIZED_UID'];
 		}
-			// If no localized relation exists, check for component as related
-			// to original uid
-		if (!$hasComponent) {
-			$where = $whereClause . " AND uid_local = '" . $this->cObj->data['uid'] . "'";
-			$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_components_mm', $where);
-			if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
-				$componentData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
-				$hasComponent = TRUE;
-			}
-		}
-		if (!$hasComponent) {
+		$where = $whereClause . " AND uid_local = '" . intval($referenceUid) . "'";
+			// Query the database and return the fetched data
+			// If the query fails or turns up no results, throw an exception
+		$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery('*', 'tx_displaycontroller_components_mm', $where);
+		if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
+			$componentData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+		} else {
 			$message = 'No component of type ' . $component . ' and level ' . $rank . ' found';
 			throw new Exception($message, 1265577739);
 		}
