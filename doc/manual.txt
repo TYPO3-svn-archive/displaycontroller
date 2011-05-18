@@ -20,6 +20,7 @@ Questions?	3
 Keeping the developer happy	4
 Installation	5
 Configuration	5
+Checking the installation	5
 Users manual	6
 The Display Controller	6
 Cached or not cached?	7
@@ -41,8 +42,7 @@ Frequently Asked Questions	18
 Troubleshooting	18
 Known problems	19
 To-Do list	20
-ChangeLog	21
-Appendix A – Tutorial answers	22
+Appendix A – Tutorial answers	21
 
 Introduction
 What does it do?
@@ -349,17 +349,6 @@ If you have any issues, please refer to the Tesseract Project web site (http://w
 To-Do list
 The roadmap for the evolution of this extension can be found on Forge: http://forge.typo3.org/projects/roadmap/extension- displaycontroller
 For feature requests, please open a report on Forge issue tracker: http://forge.typo3.org/projects/extension-displaycontroller/issues
-
-
-ChangeLog
-
-Version
-Changes:
-1.0.1
-Added a FAQ section
-Fixed some small bugs and cleaned up some old code
-1.0.0
-First public release
 Appendix A – Tutorial answers
 Here are the steps that were needed to improve the display of the e-mail address:
 1. edit the HTML so that the ###FIELD.email###marker is just next to the ###FIELD.realName### marker
