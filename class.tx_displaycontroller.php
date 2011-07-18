@@ -36,13 +36,18 @@ require_once(PATH_tslib . 'class.tslib_pibase.php');
 class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacontroller_output {
 	public $prefixId	= 'tx_displaycontroller';		// Same as class name
 	public $extKey		= 'displaycontroller';	// The extension key.
-	protected $consumer; // Contains a reference to the Data Consumer object
+	/**
+	 * Contains a reference to the frontend Data Consumer object
+	 * @var tx_tesseract_feconsumerbase
+	 */
+	protected $consumer;
 	protected $passStructure = TRUE; // Set to FALSE if Data Consumer should not receive the structure
 	protected $debug = FALSE; // Debug flag
 
 	/**
 	 * This method performs various initialisations
 	 *
+	 * @param array $conf TypoScript configuration array
 	 * @return	void
 	 */
 	protected function init($conf) {
@@ -183,10 +188,11 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 					$this->consumer = $this->getDataConsumer($consumerData);
 						// Pass reference to current object and appropriate TypoScript to consumer
 					$this->consumer->setParentReference($this);
-					$typoscriptConfiguration = isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->consumer->getTypoScriptKey()]) ? $GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->consumer->getTypoScriptKey()] : array();
+					$typoscriptKey = $this->consumer->getTypoScriptKey();
+					$typoscriptConfiguration = isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][$typoscriptKey]) ? $GLOBALS['TSFE']->tmpl->setup['plugin.'][$typoscriptKey] : array();
 					$this->consumer->setTypoScript($typoscriptConfiguration);
 					$this->consumer->setDataFilter($filter);
-						// If the structure shoud be passed to the consumer, do it now and get the rendered content
+						// If the structure should be passed to the consumer, do it now and get the rendered content
 					if ($this->passStructure) {
 							// Check if provided data structure is compatible with Data Consumer
 						if ($this->consumer->acceptsDataStructure($primaryProvider->getProvidedDataStructure())) {
@@ -403,7 +409,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 					// If the display nothing flag has been set, we must somehow stop the process
 					// The Data Provider should not even be called at all
 					// and the Data Consumer should receive an empty (special?) structure
-				if (count($filter['filters']) == 0 && empty($this->cObj->data[$checkField])) {
+				if ($datafilter->isFilterEmpty() && empty($this->cObj->data[$checkField])) {
 					$this->passStructure = FALSE;
 				}
 			}
@@ -432,6 +438,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 			$GLOBALS['TSFE']->register['sds.totalCount'] = $structure['totalCount'];
 			$GLOBALS['TSFE']->register['sds.count'] = $structure['count'];
 				// Create a local cObject for handling the redirect configuration
+				/** @var $localCObj tslib_cObj */
 			$localCObj = t3lib_div::makeInstance('tslib_cObj');
 				// If there's at least one record, load it into the cObject
 			if ($structure['count'] > 0) {
@@ -506,8 +513,8 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 * If a secondary provider is defined, it is fed into the first one
 	 *
 	 * @param	array	$providerInfo: information related to a provider, normally the row from the MM table
-	 * @param	object	$secondaryProvider: an instance of an object with a DataProvider interface
-	 * @return	object	object with a DataProvider interface
+	 * @param	tx_tesseract_dataprovider	$secondaryProvider: an instance of an object with a DataProvider interface
+	 * @return	tx_tesseract_dataprovider	object with a DataProvider interface
 	 */
 	public function getDataProvider($providerInfo, tx_tesseract_dataprovider $secondaryProvider = null) {
 			// Get the related data providers
@@ -517,6 +524,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 			throw new Exception('No provider was defined', 1269414211);
 		} else {
 				// Get the primary provider
+				/** @var $primaryProvider tx_tesseract_dataprovider */
 			$primaryProvider = t3lib_div::makeInstanceService('dataprovider', $providerInfo['tablenames']);
 			$providerData = array('table' => $providerInfo['tablenames'], 'uid' => $providerInfo['uid_foreign']);
 				// NOTE: loadData() may throw an exception, but we just let it bubble up at this point
@@ -551,6 +559,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 */
 	public function getDataConsumer($consumer) {
 			// Get the related data consumer
+			/** @var $consumerObject tx_tesseract_consumerbase */
 		$consumerObject = t3lib_div::makeInstanceService('dataconsumer', $consumer['tablenames']);
 		$consumerData = array('table' => $consumer['tablenames'], 'uid' => $consumer['uid_foreign']);
 			// NOTE: loadData() may throw an exception, but we just let it bubble up at this point
@@ -562,10 +571,11 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 * This method gets the advanced data filter
 	 *
 	 * @param	array	$filter: filter database record
-	 * @return	object	object with a DataFilter interface
+	 * @return	tx_tesseract_datafilter	object with a DataFilter interface
 	 */
 	public function getDataFilter($filter) {
 			// Get the related data filter
+			/** @var $filterObject tx_tesseract_filterbase */
 		$filterObject = t3lib_div::makeInstanceService('datafilter', $filter['tablenames']);
 		$filterData = array('table' => $filter['tablenames'], 'uid' => $filter['uid_foreign']);
 			// NOTE: loadData() may throw an exception, but we just let it bubble up at this point
