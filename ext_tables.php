@@ -79,9 +79,9 @@ $tempColumns = array(
 			)
 		)
 	),
-	'tx_displaycontroller_filtertype' => array (		
+	'tx_displaycontroller_filtertype' => array (
 		'exclude' => 0,
-		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_filtertype',		
+		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_filtertype',
 		'config' => array (
 			'type' => 'radio',
 			'items' => array (
@@ -92,14 +92,14 @@ $tempColumns = array(
 			),
 		)
 	),
-	'tx_displaycontroller_datafilter' => array (		
+	'tx_displaycontroller_datafilter' => array (
 		'exclude' => 0,
-		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_datafilter',		
+		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_datafilter',
 		'config' => array (
-			'type' => 'group',	
-			'internal_type' => 'db',	
-			'allowed' => (isset($TCA['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'])) ? $TCA['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'] : '',	
-			'size' => 1,	
+			'type' => 'group',
+			'internal_type' => 'db',
+			'allowed' => (isset($TCA['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'])) ? $TCA['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'] : '',
+			'size' => 1,
 			'minitems' => 0,
 			'maxitems' => 1,
 			'prepend_tname' => 1,
@@ -123,9 +123,9 @@ $tempColumns = array(
 			)
 		)
 	),
-	'tx_displaycontroller_emptyfilter' => array (		
+	'tx_displaycontroller_emptyfilter' => array (
 		'exclude' => 0,
-		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_emptyfilter',		
+		'label' => 'LLL:EXT:displaycontroller/locallang_db.xml:tt_content.tx_displaycontroller_emptyfilter',
 		'config' => array (
 			'type' => 'radio',
 			'items' => array (
@@ -221,10 +221,26 @@ $tempColumns = array(
 );
 t3lib_extMgm::addTCAcolumns('tt_content', $tempColumns, 1);
 
-	// Define showitem property for both plug-ins
-$showItem = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2,linkToTop;;;;3-3-3';
-$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2';
-$showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime, fe_group';
+	// Define showitem property for both plug-ins, depending on TYPO3 version
+$version = class_exists('t3lib_utility_VersionNumber')
+        ? t3lib_utility_VersionNumber::convertVersionNumberToInteger(TYPO3_version)
+        : t3lib_div::int_from_ver(TYPO3_version);
+if ($version >= 4005000) {
+    // Code for 4.5 and above
+
+	$showItem = '--palette--;LLL:EXT:cms/locallang_ttc.xml:palette.general;general, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.header;header,';
+	$showItem .= '--div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2,';
+	$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.appearance, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.frames;frames, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.textlayout;textlayout,';
+	$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.access;access,';
+	$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended';
+
+} else {
+    // Code for older versions
+
+	$showItem = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2,linkToTop;;;;3-3-3';
+	$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2';
+	$showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime, fe_group';
+}
 
 $TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $showItem;
 $TCA['tt_content']['types'][$_EXTKEY . '_pi2']['showitem'] = $showItem;
