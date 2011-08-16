@@ -1,3 +1,7 @@
+2011-08-16 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Released to TER as version 1.1.0
+
 2011-07-29 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Adapted layout of content element fields to match TYPO3 4.5 UI, resolves #28572
