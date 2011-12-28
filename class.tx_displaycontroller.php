@@ -194,8 +194,8 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 					$this->consumer->setDataFilter($filter);
 						// If the structure should be passed to the consumer, do it now and get the rendered content
 					if ($this->passStructure) {
-							// Check if provided data structure is compatible with Data Consumer
-						if ($this->consumer->acceptsDataStructure($primaryProvider->getProvidedDataStructure())) {
+							// Check if Date Provider can provide the right structure for the Data Consumer
+						if ($primaryProvider->providesDataStructure($this->consumer->getAcceptedDataStructure())) {
 								// Get the data structure and pass it to the consumer
 							$structure = $primaryProvider->getDataStructure();
 								// Check if there's a redirection configuration

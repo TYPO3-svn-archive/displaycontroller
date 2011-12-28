@@ -1,3 +1,7 @@
+2011-12-28 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Changed compatibility check between Primary Data Provider and Data Consumer, resolves #32863
+
 2011-08-16 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Released to TER as version 1.1.0
