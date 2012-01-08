@@ -1,3 +1,7 @@
+2012-01-08 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Implemented initialization of components using the new Tesseract API, resolves #33050
+
 2011-12-28 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Changed compatibility check between Primary Data Provider and Data Consumer, resolves #32863
