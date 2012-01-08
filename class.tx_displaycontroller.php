@@ -529,11 +529,13 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 			$providerData = array('table' => $providerInfo['tablenames'], 'uid' => $providerInfo['uid_foreign']);
 				// NOTE: loadData() may throw an exception, but we just let it bubble up at this point
 			$primaryProvider->loadData($providerData);
-				// Load the primary provider with the data from the secondary provider, if compatible
+				// If a secondary provider is defined and the types are compatible,
+				// load it into the newly defined provider
 			if (isset($secondaryProvider)) {
-				if ($primaryProvider->acceptsDataStructure($secondaryProvider->getProvidedDataStructure())) {
+				if ($secondaryProvider->providesDataStructure($primaryProvider->getAcceptedDataStructure())) {
 					$inputDataStructure = $secondaryProvider->getDataStructure();
-						// If the secondary provider returned no list of items, force primary provider to return an empty structure
+						// If the secondary provider returned no list of items,
+						// force primary provider to return an empty structure
 					if ($inputDataStructure['count'] == 0) {
 						$primaryProvider->initEmptyDataStructure($inputDataStructure['uniqueTable']);
 
