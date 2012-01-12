@@ -6,7 +6,11 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
-			<label index="config_debug">Debug: Turn debugging on or off. Requires a devlog-enabling extension (e.g. "devlog").</label>
+			<label index="config_debug">Debug: Choose debug settings. Debugging output can be directed to the controller's output (e.g. the frontend), to the Developer's Log (requires an extension like "devlog") or both.</label>
+			<label index="config_debug.none">None</label>
+			<label index="config_debug.output">To output</label>
+			<label index="config_debug.devlog">To Developer's Log</label>
+			<label index="config_debug.both">To both</label>
 			<label index="pi1_title">Display Controller (cached)</label>
 			<label index="pi1_plus_wiz_description">Create a fully-cached Display Controller.</label>
 			<label index="pi2_title">Display Controller (not cached)</label>

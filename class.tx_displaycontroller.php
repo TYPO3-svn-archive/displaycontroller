@@ -42,11 +42,52 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 */
 	protected $consumer;
 	protected $passStructure = TRUE; // Set to FALSE if Data Consumer should not receive the structure
-	protected $debug = FALSE; // Debug flag
+	/**
+	 * @var array General extension configuration
+	 */
+	protected $extensionConfiguration = array();
+	/**
+	 * @var bool General debugging flag
+	 */
+	protected $debug = FALSE;
+	/**
+	 * @var bool Debug to output or not
+	 */
+	protected $debugToOutput = FALSE;
+	/**
+	 * @var bool Debug to devlog or not
+	 */
+	protected $debugToDevLog = FALSE;
 	/**
 	 * @var array List of debug messages
 	 */
 	protected $messageQueue = array();
+
+	public function __construct() {
+			// Read the general configuration and initialize the debug flags
+		$this->extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
+		if (!empty($this->extensionConfiguration['debug'])) {
+			$this->debug = TRUE;
+			switch ($this->extensionConfiguration['debug']) {
+				case 'output':
+					$this->debugToOutput = TRUE;
+					break;
+				case 'devlog':
+					$this->debugToDevLog = TRUE;
+					break;
+				case 'both':
+					$this->debugToOutput = TRUE;
+					$this->debugToDevLog = TRUE;
+					break;
+
+					// Turn off all debugging if no valid value was entered
+				default:
+					$this->debug = FALSE;
+					$this->debugToOutput = FALSE;
+					$this->debugToDevLog = FALSE;
+			}
+		}
+	}
 
 	/**
 	 * This method performs various initialisations
@@ -55,11 +96,6 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 * @return	void
 	 */
 	protected function init($conf) {
-			// Activate debug mode if BE user is logged in
-			// (other conditions may be added at a later point)
-		if (!empty($GLOBALS['TSFE']->beUserLogin)) {
-			$this->debug = TRUE;
-		}
 			// Merge the configuration of the pi* plugin with the general configuration
 			// defined with plugin.tx_displaycontroller (if defined)
 		if (isset($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId . '.'])) {
@@ -246,7 +282,35 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 				echo 'An error occurred querying the database for the primary data provider.';
 			}
 		}
+			// If debugging to output is active, prepend content with debugging messages
+		if ($this->debugToOutput) {
+			$content = $this->renderMessageQueue() . $content;
+		}
 		return $content;
+	}
+
+	/**
+	 * Renders all messages and dumps their related data
+	 *
+	 * @return string Debug output
+	 */
+	protected function renderMessageQueue() {
+		$debugOutput = '';
+		foreach ($this->messageQueue as $messageList) {
+			foreach ($messageList as $messageData) {
+				$debugOutput .= $messageData['message']->render();
+				if ($messageData['data'] !== NULL) {
+					if (is_array($messageData['data'])) {
+						$debugData = $messageData['data'];
+					} else {
+						$debugData = array($messageData['data']);
+					}
+					$debugOutput .= t3lib_utility_Debug::viewArray($debugData);
+				}
+			}
+		}
+
+		return $debugOutput;
 	}
 
 	/**
