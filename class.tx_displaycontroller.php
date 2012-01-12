@@ -43,6 +43,10 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	protected $consumer;
 	protected $passStructure = TRUE; // Set to FALSE if Data Consumer should not receive the structure
 	protected $debug = FALSE; // Debug flag
+	/**
+	 * @var array List of debug messages
+	 */
+	protected $messageQueue = array();
 
 	/**
 	 * This method performs various initialisations
@@ -583,6 +587,53 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		return $this->prefixId;
 	}
 
+	/**
+	 * Adds a debugging message to the controller's internal message queue
+	 *
+	 * @param string $key A key identifying a set the message belongs to (typically the calling extension's key)
+	 * @param string $message Text of the message
+	 * @param string $title An optional title for the message
+	 * @param int $status A status/severity level for the message, based on the class constants from t3lib_FlashMessage
+	 * @param mixed $debugData An optional variable containing additional debugging information
+	 * @return void
+	 */
+	public function addMessage($key, $message, $title = '', $status = t3lib_FlashMessage::INFO, $debugData = NULL) {
+			// Store the message only if debugging is active
+		if ($this->debug) {
+			if (!is_array($this->messageQueue[$key])) {
+				$this->messageQueue[$key] = array();
+			}
+				// The message data that corresponds to the Flash Message is stored directly as a Flash Message object,
+				// as this performs input validation on the data
+			$this->messageQueue[$key][] = array(
+				'message' => t3lib_div::makeInstance('t3lib_FlashMessage', $message, $title, $status),
+				'data' => $debugData
+			);
+		}
+	}
+
+	/**
+	 * Returns the complete message queue
+	 *
+	 * @return array The message queue
+	 */
+	public function getMessageQueue() {
+		return $this->messageQueue;
+	}
+
+	/**
+	 * Returns the message queue for a given key
+	 *
+	 * @param string $key The key to return the messages for
+	 * @return array The message queue for the given key
+	 */
+	public function getMessageQueueForKey($key) {
+		$messageList = array();
+		if (isset($this->messageQueue[$key])) {
+			$messageList = $this->messageQueue[$key];
+		}
+		return $messageList;
+	}
 }
 
 

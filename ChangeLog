@@ -1,3 +1,7 @@
+2012-01-12 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Implemented new message queue API, resolves #33149
+
 2012-01-08 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Implemented initialization of components using the new Tesseract API, resolves #33050
