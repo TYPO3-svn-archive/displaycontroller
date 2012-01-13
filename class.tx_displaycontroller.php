@@ -654,7 +654,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	/**
 	 * Adds a debugging message to the controller's internal message queue
 	 *
-	 * @param string $key A key identifying a set the message belongs to (typically the calling extension's key)
+	 * @param string $key A key identifying the calling component (typically an extension's key)
 	 * @param string $message Text of the message
 	 * @param string $title An optional title for the message
 	 * @param int $status A status/severity level for the message, based on the class constants from t3lib_FlashMessage
@@ -664,13 +664,12 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	public function addMessage($key, $message, $title = '', $status = t3lib_FlashMessage::INFO, $debugData = NULL) {
 			// Store the message only if debugging is active
 		if ($this->debug) {
-			if (!is_array($this->messageQueue[$key])) {
-				$this->messageQueue[$key] = array();
-			}
+				// Prepend title, if any, with key
+			$fullTitle = '[' . $key . ']' . ((empty($title)) ? '' : ' ' . $title);
 				// The message data that corresponds to the Flash Message is stored directly as a Flash Message object,
 				// as this performs input validation on the data
 			$this->messageQueue[$key][] = array(
-				'message' => t3lib_div::makeInstance('t3lib_FlashMessage', $message, $title, $status),
+				'message' => t3lib_div::makeInstance('t3lib_FlashMessage', $message, $fullTitle, $status),
 				'data' => $debugData
 			);
 		}
@@ -683,20 +682,6 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 */
 	public function getMessageQueue() {
 		return $this->messageQueue;
-	}
-
-	/**
-	 * Returns the message queue for a given key
-	 *
-	 * @param string $key The key to return the messages for
-	 * @return array The message queue for the given key
-	 */
-	public function getMessageQueueForKey($key) {
-		$messageList = array();
-		if (isset($this->messageQueue[$key])) {
-			$messageList = $this->messageQueue[$key];
-		}
-		return $messageList;
 	}
 }
 
