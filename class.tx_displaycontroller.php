@@ -298,6 +298,14 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 * @return string Debug output
 	 */
 	protected function renderMessageQueue() {
+			// Add t3skin stylesheets for proper display, if t3skin is loaded
+		if (t3lib_extMgm::isLoaded('t3skin')) {
+				/** @var $pageRenderer t3lib_PageRenderer */
+			$pageRenderer = $GLOBALS['TSFE']->getPageRenderer();
+			$pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/structure/element_message.css');
+			$pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/visual/element_message.css');
+		}
+			// Prepare the output and return it
 		$debugOutput = '';
 		foreach ($this->messageQueue as $messageData) {
 			$debugOutput .= $messageData['message']->render();
