@@ -22,7 +22,7 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(PATH_tslib . 'class.tslib_pibase.php');
+require_once(t3lib_extMgm::extPath('tesseract', 'base/class.tx_tesseract_picontrollerbase.php'));
 
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
@@ -33,8 +33,8 @@ require_once(PATH_tslib . 'class.tslib_pibase.php');
  *
  * $Id$
  */
-class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacontroller_output {
-	public $prefixId	= 'tx_displaycontroller';		// Same as class name
+class tx_displaycontroller extends tx_tesseract_picontrollerbase {
+	public $prefixId = 'tx_displaycontroller';		// Same as class name
 	public $extKey		= 'displaycontroller';	// The extension key.
 	/**
 	 * Contains a reference to the frontend Data Consumer object
@@ -50,10 +50,6 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 */
 	protected $extensionConfiguration = array();
 	/**
-	 * @var bool General debugging flag
-	 */
-	protected $debug = FALSE;
-	/**
 	 * @var bool Debug to output or not
 	 */
 	protected $debugToOutput = FALSE;
@@ -61,10 +57,6 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 * @var bool Debug to devlog or not
 	 */
 	protected $debugToDevLog = FALSE;
-	/**
-	 * @var array List of debug messages
-	 */
-	protected $messageQueue = array();
 
 	public function __construct() {
 			// Read the general configuration and initialize the debug flags
@@ -702,16 +694,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		}
 	}
 
-// tx_tesseract_datacontroller_output interface methods
-
-	/**
-	 * This method returns the plug-in's prefix id
-	 *
-	 * @return	string	The plug-in's prefix id
-	 */
-	public function getPrefixId() {
-		return $this->prefixId;
-	}
+// Override tx_tesseract_pidatacontroller_output interface methods
 
 	/**
 	 * Adds a debugging message to the controller's internal message queue
@@ -761,15 +744,6 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 				t3lib_div::devLog($flashMessage->getTitle() . ': ' . $flashMessage->getMessage(), $key, $level, $extraData);
 			}
 		}
-	}
-
-	/**
-	 * Returns the complete message queue
-	 *
-	 * @return array The message queue
-	 */
-	public function getMessageQueue() {
-		return $this->messageQueue;
 	}
 }
 

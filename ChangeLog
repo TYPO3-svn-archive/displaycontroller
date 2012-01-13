@@ -1,6 +1,7 @@
 2012-01-13 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Enhanced error reporting, resolves #1695
+	* Implemented new base class for pi-based controllers, resolves #33187
 
 2012-01-12 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
