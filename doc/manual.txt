@@ -3,7 +3,7 @@ EXT: Display Controller
 Extension Key: displaycontroller
 Language: en
 Keywords: forEditors, forIntermediates
-Copyright 2000-2010, François Suter, <typo3@cobweb.ch>
+Copyright 2000-2012, François Suter, <typo3@cobweb.ch>
 
 This document is published under the Open Content License
 available from http://www.opencontent.org/opl.shtml
@@ -20,29 +20,29 @@ Questions?	3
 Keeping the developer happy	4
 Installation	5
 Configuration	5
-Checking the installation	5
-Users manual	6
-The Display Controller	6
-Cached or not cached?	7
-Query parameters	7
-Configuration	8
-TypoScript	8
-Redirection mechanism	8
-Hooks	9
-RealURL	9
-Tutorial	11
-Scenario	11
-Preparing for work	11
-Querying the database	11
-Preparing a template for display	12
-Fitting it all together	13
-Improving the display	15
-Next steps	17
-Frequently Asked Questions	18
-Troubleshooting	18
-Known problems	19
-To-Do list	20
-Appendix A – Tutorial answers	21
+Checking the installation	6
+Users manual	7
+The Display Controller	7
+Cached or not cached?	8
+Query parameters	8
+Configuration	9
+TypoScript	9
+Redirection mechanism	9
+Hooks	10
+RealURL	10
+Tutorial	12
+Scenario	12
+Preparing for work	12
+Querying the database	12
+Preparing a template for display	13
+Fitting it all together	14
+Improving the display	16
+Next steps	18
+Frequently Asked Questions	19
+Troubleshooting	19
+Known problems	20
+To-Do list	21
+Appendix A – Tutorial answers	22
 
 Introduction
 What does it do?
@@ -62,7 +62,8 @@ The extension will add a number of fields to the tt_content table and creates a 
 After installation the static TypoScript template provided by the extension should be added to the site's template.
 Configuration
 There's a single configuration option available after installing the extension:
-debug: check this box to enable some debug statements to be logged. This relies on the Developer's Log, so you need some extension that enables it, like “devlog” for example.
+debug: Choose the type of debugging that you want. Debugging to the output will display status messages right before the Display Controller's normal output in the frontend (see screenshot below). Debugging to the Developer's Log will log messages provided you have an extension enabling that log (such as "devlog"). It's also possible to debug to both. Choosing "None" will turn all debugging off.
+
 Checking the installation
 The loading order of the various Tesseract components is of importance. The best way to check if everything is properly installed is to create a new Display Controller content element and check the "Data Objects" tab.
 If no wizards icons appear for adding new Tesseract components, it means that the "displaycontroller" extension is loaded after the others (like "dataquery", "datafilter", etc.). You should change the loading order of the extensions so that "displaycontroller" comes before such components (but still after "tesseract" itself).

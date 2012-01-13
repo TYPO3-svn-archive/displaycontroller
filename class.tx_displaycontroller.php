@@ -93,6 +93,22 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	}
 
 	/**
+	 * Overrides the default pi_loadLL method, as displaycontroller provides two plugins sharing the same locallang files
+	 *
+	 * NOTE: TypoScript override of language labels is not implemented
+	 *
+	 * @return	void
+	 */
+	public function pi_loadLL() {
+			// Read the strings in the required charset
+		$this->LOCAL_LANG = t3lib_div::readLLfile('EXT:' . $this->extKey . '/locallang.xml', $this->LLkey, $GLOBALS['TSFE']->renderCharset);
+		if ($this->altLLkey) {
+			$this->LOCAL_LANG = t3lib_div::readLLfile('EXT:' . $this->extKey . '/locallang.xml', $this->altLLkey);
+		}
+		$this->LOCAL_LANG_loaded = 1;
+	}
+
+	/**
 	 * This method performs various initialisations
 	 *
 	 * @param array $conf TypoScript configuration array
@@ -108,6 +124,8 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		}
 			// Override standard piVars definition
 		$this->piVars = t3lib_div::_GPmerged($this->prefixId);
+			// Load the language labels
+		$this->pi_loadLL();
 			// Finally load some additional data into the parser
 		$this->loadParserData();
 	}
@@ -178,13 +196,21 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 						// Something happened, skip passing the structure to the Data Consumer
 					catch (Exception $e) {
 						$this->passStructure = FALSE;
-						if ($this->debug) {
-							echo 'Secondary provider set passStructure to false with the following exception: ' . $e->getMessage();
-						}
+						$this->addMessage(
+							$this->extKey,
+							$e->getMessage() . ' (' . $e->getCode() . ')',
+							$this->pi_getLL('error.secondary_provider_interrupt'),
+							t3lib_FlashMessage::WARNING
+						);
 					}
 				}
 				catch (Exception $e) {
-					// Nothing to do if no secondary provider was found
+					$this->addMessage(
+						$this->extKey,
+						$e->getMessage() . ' (' . $e->getCode() . ')',
+						$this->pi_getLL('error.no_secondary_provider'),
+						t3lib_FlashMessage::ERROR
+					);
 				}
 			}
 		}
@@ -197,7 +223,12 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		catch (Exception $e) {
 				// Issue warning (error?) if a problem occurred with the filter
 			if ($this->debug) {
-				echo 'The primary filter threw the following exception: ' . $e->getMessage();
+				$this->addMessage(
+					$this->extKey,
+					$e->getMessage() . ' (' . $e->getCode() . ')',
+					$this->pi_getLL('error.primary_filter'),
+					t3lib_FlashMessage::ERROR
+				);
 			}
 		}
 
@@ -220,9 +251,12 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 					// Something happened, skip passing the structure to the Data Consumer
 				catch (Exception $e) {
 					$this->passStructure = FALSE;
-					if ($this->debug) {
-						echo 'Primary provider set passStructure to false with the following exception: '.$e->getMessage();
-					}
+					$this->addMessage(
+						$this->extKey,
+						$e->getMessage() . ' (' . $e->getCode() . ')',
+						$this->pi_getLL('error.primary_provider_interrupt'),
+						t3lib_FlashMessage::WARNING
+					);
 				}
 			}
 
@@ -257,7 +291,12 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 							$this->consumer->startProcess();
 							$content = $this->consumer->getResult();
 						} else {
-							// TODO: Issue error if data structures are not compatible between provider and consumer
+							$this->addMessage(
+								$this->extKey,
+								$this->pi_getLL('error.incompatible_provider_consumer'),
+								'',
+								t3lib_FlashMessage::ERROR
+							);
 						}
 					}
 						// If no structure should be passed (see defineFilter()),
@@ -269,21 +308,30 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 					}
 				}
 				catch (Exception $e) {
-					if ($this->debug) {
-						echo 'Could not get the data consumer. The following exception was returned: '.$e->getMessage();
-					}
+					$this->addMessage(
+						$this->extKey,
+						$e->getMessage() . ' (' . $e->getCode() . ')',
+						$this->pi_getLL('error.no_consumer'),
+						t3lib_FlashMessage::ERROR
+					);
 				}
 			}
 			catch (Exception $e) {
-				if ($this->debug) {
-					echo 'An error occurred querying the database for the data consumer.';
-				}
+				$this->addMessage(
+					$this->extKey,
+					$e->getMessage() . ' (' . $e->getCode() . ')',
+					$this->pi_getLL('error.no_consumer'),
+					t3lib_FlashMessage::ERROR
+				);
 			}
 		}
 		catch (Exception $e) {
-			if ($this->debug) {
-				echo 'An error occurred querying the database for the primary data provider.';
-			}
+			$this->addMessage(
+				$this->extKey,
+				$e->getMessage() . ' (' . $e->getCode() . ')',
+				$this->pi_getLL('error.no_primary_provider'),
+				t3lib_FlashMessage::ERROR
+			);
 		}
 			// If debugging to output is active, prepend content with debugging messages
 		if ($this->debugToOutput) {
@@ -507,11 +555,16 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 				}
 			}
 			catch (Exception $e) {
-				echo 'Error getting filter: '.$e->getMessage();
+				$this->addMessage(
+					$this->extKey,
+					$e->getMessage() . ' (' . $e->getCode() . ')',
+					$this->pi_getLL('error.get_filter'),
+					t3lib_FlashMessage::WARNING
+				);
 			}
 		}
 		catch (Exception $e) {
-			throw new Exception('No data filter found');
+			throw new Exception($this->pi_getLL('exception.no_filter'), 1326454151);
 		}
 		return $filter;
 	}
@@ -595,7 +648,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		if ($res && $GLOBALS['TYPO3_DB']->sql_num_rows($res) > 0) {
 			$componentData = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
 		} else {
-			$message = 'No component of type ' . $component . ' and level ' . $rank . ' found';
+			$message = sprintf($this->pi_getLL('exception.no_component'), $component, $rank);
 			throw new Exception($message, 1265577739);
 		}
 		return $componentData;
@@ -615,7 +668,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 		$numProviders = count($providerInfo);
 		if ($numProviders == 0) {
 				// No provider, throw exception
-			throw new Exception('No provider was defined', 1269414211);
+			throw new Exception($this->pi_getLL('exception.no_provider'), 1269414211);
 		} else {
 				// Get the Data Provider Component
 				/** @var $provider tx_tesseract_dataprovider */
@@ -642,7 +695,7 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 				}
 					// Providers are not compatible, throw exception
 				else {
-					throw new Exception('Incompatible structures between primary and secondary providers', 1269414231);
+					throw new Exception($this->pi_getLL('exception.incompatible_providers'), 1269414231);
 				}
 			}
 			return $provider;

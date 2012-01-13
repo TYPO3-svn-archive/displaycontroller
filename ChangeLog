@@ -1,3 +1,7 @@
+2012-01-13 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Enhanced error reporting, resolves #1695
+
 2012-01-12 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Implemented new message queue API, resolves #33149
