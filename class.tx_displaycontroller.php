@@ -296,17 +296,15 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 */
 	protected function renderMessageQueue() {
 		$debugOutput = '';
-		foreach ($this->messageQueue as $messageList) {
-			foreach ($messageList as $messageData) {
-				$debugOutput .= $messageData['message']->render();
-				if ($messageData['data'] !== NULL) {
-					if (is_array($messageData['data'])) {
-						$debugData = $messageData['data'];
-					} else {
-						$debugData = array($messageData['data']);
-					}
-					$debugOutput .= t3lib_utility_Debug::viewArray($debugData);
+		foreach ($this->messageQueue as $messageData) {
+			$debugOutput .= $messageData['message']->render();
+			if ($messageData['data'] !== NULL) {
+				if (is_array($messageData['data'])) {
+					$debugData = $messageData['data'];
+				} else {
+					$debugData = array($messageData['data']);
 				}
+				$debugOutput .= t3lib_utility_Debug::viewArray($debugData);
 			}
 		}
 
@@ -668,10 +666,36 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 			$fullTitle = '[' . $key . ']' . ((empty($title)) ? '' : ' ' . $title);
 				// The message data that corresponds to the Flash Message is stored directly as a Flash Message object,
 				// as this performs input validation on the data
-			$this->messageQueue[$key][] = array(
-				'message' => t3lib_div::makeInstance('t3lib_FlashMessage', $message, $fullTitle, $status),
+				/** @var $flashMessage t3lib_FlashMessage */
+			$flashMessage = t3lib_div::makeInstance('t3lib_FlashMessage', $message, $fullTitle, $status);
+			$this->messageQueue[] = array(
+				'message' => $flashMessage,
 				'data' => $debugData
 			);
+				// Additionally write the message to the devLog if needed
+			if ($this->debugToDevLog) {
+					// Make sure debug data is either NULL or array
+				$extraData = NULL;
+				if ($debugData !== NULL) {
+					if (is_array($debugData)) {
+						$extraData = $debugData;
+					} else {
+						$extraData = array($debugData);
+					}
+				}
+					// Match status to devLog levels
+				switch ($flashMessage->getSeverity()) {
+					case t3lib_FlashMessage::OK:
+						$level = -1;
+						break;
+					case t3lib_FlashMessage::NOTICE:
+						$level = 1;
+						break;
+					default:
+						$level = $flashMessage->getSeverity() + 1;
+				}
+				t3lib_div::devLog($flashMessage->getTitle() . ': ' . $flashMessage->getMessage(), $key, $level, $extraData);
+			}
 		}
 	}
 
