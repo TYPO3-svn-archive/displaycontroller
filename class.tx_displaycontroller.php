@@ -41,7 +41,10 @@ class tx_displaycontroller extends tslib_pibase implements tx_tesseract_datacont
 	 * @var tx_tesseract_feconsumerbase
 	 */
 	protected $consumer;
-	protected $passStructure = TRUE; // Set to FALSE if Data Consumer should not receive the structure
+	/**
+	 * @var bool FALSE if Data Consumer should not receive the structure
+	 */
+	protected $passStructure = TRUE;
 	/**
 	 * @var array General extension configuration
 	 */
