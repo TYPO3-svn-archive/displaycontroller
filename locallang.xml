@@ -11,6 +11,12 @@
 			<label index="config_debug.output">To output</label>
 			<label index="config_debug.devlog">To Developer's Log</label>
 			<label index="config_debug.both">To both</label>
+			<label index="minDebugLevel">Minimum level for debugging: Messages with a severity below the chosen limit will not be logged. This helps avoid clogging the output.</label>
+			<label index="minDebugLevel.ok">Success</label>
+			<label index="minDebugLevel.info">Information</label>
+			<label index="minDebugLevel.notice">Notice</label>
+			<label index="minDebugLevel.warning">Warning</label>
+			<label index="minDebugLevel.error">Error</label>
 			<label index="exception.no_component">No component of type %1$s and level %2$d found.</label>
 			<label index="exception.no_provider">No provider defined.</label>
 			<label index="exception.no_filter">No data filter found.</label>

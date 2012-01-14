@@ -1,2 +1,5 @@
 # cat=basic/enable/; type=options[LLL:EXT:displaycontroller/locallang.xml:config_debug.none=none,LLL:EXT:displaycontroller/locallang.xml:config_debug.output=output,LLL:EXT:displaycontroller/locallang.xml:config_debug.devlog=devlog,LLL:EXT:displaycontroller/locallang.xml:config_debug.both=both]; label=LLL:EXT:displaycontroller/locallang.xml:config_debug
 debug = none
+
+# cat=basic/enable/; type=options[LLL:EXT:displaycontroller/locallang.xml:minDebugLevel.ok=-1,LLL:EXT:displaycontroller/locallang.xml:minDebugLevel.info=0,LLL:EXT:displaycontroller/locallang.xml:minDebugLevel.notice=1,LLL:EXT:displaycontroller/locallang.xml:minDebugLevel.warning=2,LLL:EXT:displaycontroller/locallang.xml:minDebugLevel.error=3]; label=LLL:EXT:displaycontroller/locallang.xml:minDebugLevel
+minDebugLevel = none

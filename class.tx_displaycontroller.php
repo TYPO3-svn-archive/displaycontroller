@@ -57,6 +57,10 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 	 * @var bool Debug to devlog or not
 	 */
 	protected $debugToDevLog = FALSE;
+	/**
+	 * @var int Minimum level of message to be logged. Default is all.
+	 */
+	protected $debugMinimumLevel = -1;
 
 	public function __construct() {
 			// Read the general configuration and initialize the debug flags
@@ -80,6 +84,13 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 					$this->debug = FALSE;
 					$this->debugToOutput = FALSE;
 					$this->debugToDevLog = FALSE;
+			}
+		}
+			// Make sure the minimum debugging level is set and has a correct value
+		if (isset($this->extensionConfiguration['minDebugLevel'])) {
+			$level = intval($this->extensionConfiguration['minDebugLevel']);
+			if ($level >= -1 && $level <= 3) {
+				$this->debugMinimumLevel = $level;
 			}
 		}
 	}
@@ -709,39 +720,49 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 	public function addMessage($key, $message, $title = '', $status = t3lib_FlashMessage::INFO, $debugData = NULL) {
 			// Store the message only if debugging is active
 		if ($this->debug) {
-				// Prepend title, if any, with key
-			$fullTitle = '[' . $key . ']' . ((empty($title)) ? '' : ' ' . $title);
-				// The message data that corresponds to the Flash Message is stored directly as a Flash Message object,
-				// as this performs input validation on the data
-				/** @var $flashMessage t3lib_FlashMessage */
-			$flashMessage = t3lib_div::makeInstance('t3lib_FlashMessage', $message, $fullTitle, $status);
-			$this->messageQueue[] = array(
-				'message' => $flashMessage,
-				'data' => $debugData
-			);
-				// Additionally write the message to the devLog if needed
-			if ($this->debugToDevLog) {
-					// Make sure debug data is either NULL or array
-				$extraData = NULL;
-				if ($debugData !== NULL) {
-					if (is_array($debugData)) {
-						$extraData = $debugData;
-					} else {
-						$extraData = array($debugData);
+				// Validate status
+				// Fall back to default if invalid
+			$status = intval($status);
+			if ($status < t3lib_FlashMessage::NOTICE || $status > t3lib_FlashMessage::ERROR) {
+				$status = t3lib_FlashMessage::INFO;
+			}
+				// Match status to devLog levels
+				// (which follow a more logical progression than Flash Message levels)
+			switch ($status) {
+				case t3lib_FlashMessage::OK:
+					$level = -1;
+					break;
+				case t3lib_FlashMessage::NOTICE:
+					$level = 1;
+					break;
+				default:
+					$level = $status + 1;
+			}
+				// Actually store the message only if it meets the minimum severity level
+			if ($level >= $this->debugMinimumLevel) {
+					// Prepend title, if any, with key
+				$fullTitle = '[' . $key . ']' . ((empty($title)) ? '' : ' ' . $title);
+					// The message data that corresponds to the Flash Message is stored directly as a Flash Message object,
+					// as this performs input validation on the data
+					/** @var $flashMessage t3lib_FlashMessage */
+				$flashMessage = t3lib_div::makeInstance('t3lib_FlashMessage', $message, $fullTitle, $status);
+				$this->messageQueue[] = array(
+					'message' => $flashMessage,
+					'data' => $debugData
+				);
+					// Additionally write the message to the devLog if needed
+				if ($this->debugToDevLog) {
+						// Make sure debug data is either NULL or array
+					$extraData = NULL;
+					if ($debugData !== NULL) {
+						if (is_array($debugData)) {
+							$extraData = $debugData;
+						} else {
+							$extraData = array($debugData);
+						}
 					}
+					t3lib_div::devLog($flashMessage->getTitle() . ': ' . $flashMessage->getMessage(), $key, $level, $extraData);
 				}
-					// Match status to devLog levels
-				switch ($flashMessage->getSeverity()) {
-					case t3lib_FlashMessage::OK:
-						$level = -1;
-						break;
-					case t3lib_FlashMessage::NOTICE:
-						$level = 1;
-						break;
-					default:
-						$level = $flashMessage->getSeverity() + 1;
-				}
-				t3lib_div::devLog($flashMessage->getTitle() . ': ' . $flashMessage->getMessage(), $key, $level, $extraData);
 			}
 		}
 	}
