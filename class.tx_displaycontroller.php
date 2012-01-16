@@ -238,15 +238,13 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			);
 		}
 		catch (Exception $e) {
-				// Issue warning (error?) if a problem occurred with the filter
-			if ($this->debug) {
-				$this->addMessage(
-					$this->extKey,
-					$e->getMessage() . ' (' . $e->getCode() . ')',
-					$this->pi_getLL('error.primary_filter'),
-					t3lib_FlashMessage::ERROR
-				);
-			}
+				// Issue error if a problem occurred with the filter
+			$this->addMessage(
+				$this->extKey,
+				$e->getMessage() . ' (' . $e->getCode() . ')',
+				$this->pi_getLL('error.primary_filter'),
+				t3lib_FlashMessage::ERROR
+			);
 		}
 
 			// Get the primary data provider
