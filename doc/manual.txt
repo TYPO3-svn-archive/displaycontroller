@@ -18,6 +18,7 @@ What does it do?	3
 Screenshots	3
 Questions?	3
 Keeping the developer happy	4
+Credits	4
 Installation	5
 Configuration	5
 Checking the installation	6
@@ -56,6 +57,8 @@ If you have any questions about this extension, you may want to refer to the Tes
 Keeping the developer happy
 If you like this extension, do not hesitate to rate it. Go the Extension Repository, search for this extension, click on its title to go to the details view, then click on the “Ratings” tab and vote (you need to be logged in). Every new vote keeps the developer ticking. So just do it!
 You may also take a step back and reflect about the beauty of sharing. Think about how much you are benefiting and how much yourself is giving back to the community.
+Credits
+The Display Controller relies on a library called Kint to dump the debug data in the frontend. Kint is developed by Rokas Šleinius. The project is hosted at  Google Code: http://code.google.com/p/kint/
 Installation
 The Display Controller must be installed as part of the Tesseract suite of extensions. It is useless outside of this scope.
 The extension will add a number of fields to the tt_content table and creates a new table used to store the relations between the various Tesseract components.

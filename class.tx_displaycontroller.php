@@ -368,6 +368,7 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			$pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/structure/element_message.css');
 			$pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/visual/element_message.css');
 		}
+		require_once(t3lib_extMgm::extPath($this->extKey, 'lib/kint/Kint.class.php'));
 			// Prepare the output and return it
 		$debugOutput = '';
 		foreach ($this->messageQueue as $messageData) {
@@ -378,7 +379,7 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 				} else {
 					$debugData = array($messageData['data']);
 				}
-				$debugOutput .= t3lib_utility_Debug::viewArray($debugData);
+				$debugOutput .= @Kint::dump($debugData);
 			}
 		}
 

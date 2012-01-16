@@ -1,6 +1,7 @@
 2012-01-16 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Removed all mentions of contexts from the manual, updated the hooks list, resolves #33223
+	* Added Kint to dump debug data instead of t3lib_utility_Debug::debug(), resolves #33174
 
 2012-01-13 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
