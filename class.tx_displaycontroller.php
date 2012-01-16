@@ -184,6 +184,13 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			$secondaryFilter = $this->getEmptyFilter();
 			if (!empty($this->cObj->data['tx_displaycontroller_datafilter2'])) {
 				$secondaryFilter = $this->defineAdvancedFilter('secondary');
+				$this->addMessage(
+					$this->extKey,
+					$this->pi_getLL('info.calculated_filter'),
+					$this->pi_getLL('info.secondary_filter'),
+					t3lib_FlashMessage::INFO,
+					$secondaryFilter
+				);
 			}
 				// Get the secondary provider if necessary,
 				// i.e. if the process was not blocked by the advanced filter (by setting the passStructure flag to false)
@@ -222,6 +229,13 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			// Define the filter (if any)
 		try {
 			$filter = $this->definePrimaryFilter();
+			$this->addMessage(
+				$this->extKey,
+				$this->pi_getLL('info.calculated_filter'),
+				$this->pi_getLL('info.primary_filter'),
+				t3lib_FlashMessage::INFO,
+				$filter
+			);
 		}
 		catch (Exception $e) {
 				// Issue warning (error?) if a problem occurred with the filter
@@ -459,7 +473,7 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 	/**
 	 * This method defines the filter for the default, simple list view
 	 * It expects two parameters, "limit" and "page" ,for browsing the list's pages
-	 * It will also considere a default sorting scheme represented by the "sort" and "order" parameters
+	 * It will also consider a default sorting scheme represented by the "sort" and "order" parameters
 	 *
 	 * @return	array	A filter structure
 	 */
