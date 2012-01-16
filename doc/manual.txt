@@ -121,10 +121,6 @@ detailView
 -> detailViewConfig
 Configuration for the detail. Currently this is just about setting a different keyword for the RealURL postVarSets (see “RealURL” below).
 
-context
-(TypoScript)
-This property is just a container for more TypoScript. When parsed, the resulting array will be loaded into the “extra data” of the Base Controller's parser and will thus be available to all expressions (see “Context” below).
-
 [tsref:plugin.tx_displaycontroller]
 -> redirectConfig
 Property:
@@ -196,20 +192,19 @@ plugin.tx_displaycontroller.redirect.enable = 0
 or cancel it altogether:
 plugin.tx_displaycontroller.redirect >
 Hooks
-There's one hook defined in the Display Controller. It is used to set extra data to pass to the Base Controller's parser, if an advanced filter was selected for either primary or secondary Data Provider.
+There's one hook defined in the Display Controller. It can be used to manipulate filters after their initialization. At this point a filter may either be empty or already have some structure read from the session cache.
 The hook must be registered that way:
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['displaycontroller']['setExtraDataForParser'][] = 'myextension/class.tx_ myextension_hook.php:&tx_ myextension_hook';
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['displaycontroller']['extendInitFilter'][] = 'myextension/class.tx_ myextension_hook.php:&tx_ myextension_hook';
 
 and a typical implementation might look like:
-class tx_cobwebconfig_hook {
-	public function setExtraDataForParser($data, $pObj) {
-		$data[] = 'coucou';
-		$data[] = 15;
-		return $data;
+class tx_myextension_hook {
+	public function extendInitFilter($filter, $parentObject) {
+		// Do some changes to the filter
+		return $filter;
 	}
 }
 
-The method to implement is called “setExtraDataForParser” and it receives 2 arguments. The first one is the array containing the existing extra data and the second one is a reference to the Display Controller. The method must return the modified data array.
+The method to implement is called extendInitFilter and it receives 2 arguments. The first one is the array containing the filter data and the second one is a reference to the Display Controller itself. The method must return the modified filter, even if no changes were made to it.
 RealURL
 The Display Controller provides a user object for creating speaking URLs for any link to a single record in conjunction with RealURL. A typical configuration will look like:
 $TYPO3_CONF_VARS['EXTCONF']['realurl']['_DEFAULT']['postVarSets']['_DEFAULT'] = array(

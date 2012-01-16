@@ -1,3 +1,7 @@
+2012-01-16 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Removed all mentions of contexts from the manual, updated the hooks list, resolves #33223
+
 2012-01-13 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Enhanced error reporting, resolves #1695
