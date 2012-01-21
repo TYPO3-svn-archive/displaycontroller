@@ -1,3 +1,7 @@
+2012-01-21 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Moved debug output to a separate class, made it configurable, resolves #33360
+
 2012-01-16 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Removed all mentions of contexts from the manual, updated the hooks list, resolves #33223

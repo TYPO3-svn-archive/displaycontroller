@@ -350,40 +350,26 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 		}
 			// If debugging to output is active, prepend content with debugging messages
 		if ($this->debugToOutput) {
-			$content = $this->renderMessageQueue() . $content;
+				/** @var $debugger tx_displaycontroller_debugger */
+			$debugger = NULL;
+				// If a custom debugging class is declared, get an instance of it
+			if (!empty($this->extensionConfiguration['debugger'])) {
+				$debugger = t3lib_div::makeInstance(
+					$this->extensionConfiguration['debugger'],
+					$GLOBALS['TSFE']->getPageRenderer()
+				);
+			}
+				// If no custom debugger class is defined or if it was not of the right type,
+				// instantiate the default class
+			if ($debugger === NULL || !($debugger instanceof tx_displaycontroller_debugger)) {
+				$debugger = t3lib_div::makeInstance(
+					'tx_displaycontroller_debugger',
+					$GLOBALS['TSFE']->getPageRenderer()
+				);
+			}
+			$content = $debugger->render($this->messageQueue) . $content;
 		}
 		return $content;
-	}
-
-	/**
-	 * Renders all messages and dumps their related data
-	 *
-	 * @return string Debug output
-	 */
-	protected function renderMessageQueue() {
-			// Add t3skin stylesheets for proper display, if t3skin is loaded
-		if (t3lib_extMgm::isLoaded('t3skin')) {
-				/** @var $pageRenderer t3lib_PageRenderer */
-			$pageRenderer = $GLOBALS['TSFE']->getPageRenderer();
-			$pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/structure/element_message.css');
-			$pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/visual/element_message.css');
-		}
-		require_once(t3lib_extMgm::extPath($this->extKey, 'lib/kint/Kint.class.php'));
-			// Prepare the output and return it
-		$debugOutput = '';
-		foreach ($this->messageQueue as $messageData) {
-			$debugOutput .= $messageData['message']->render();
-			if ($messageData['data'] !== NULL) {
-				if (is_array($messageData['data'])) {
-					$debugData = $messageData['data'];
-				} else {
-					$debugData = array($messageData['data']);
-				}
-				$debugOutput .= @Kint::dump($debugData);
-			}
-		}
-
-		return $debugOutput;
 	}
 
 	/**

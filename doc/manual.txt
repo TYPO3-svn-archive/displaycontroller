@@ -65,8 +65,10 @@ The extension will add a number of fields to the tt_content table and creates a 
 After installation the static TypoScript template provided by the extension should be added to the site's template.
 Configuration
 There's a single configuration option available after installing the extension:
-debug: Choose the type of debugging that you want. Debugging to the output will display status messages right before the Display Controller's normal output in the frontend (see screenshot below). Debugging to the Developer's Log will log messages provided you have an extension enabling that log (such as "devlog"). It's also possible to debug to both. Choosing "None" will turn all debugging off.
+Debug: Choose the type of debugging that you want. Debugging to the output will display status messages right before the Display Controller's normal output in the frontend (see screenshot below). Debugging to the Developer's Log will log messages provided you have an extension enabling that log (such as "devlog"). It's also possible to debug to both. Choosing "None" will turn all debugging off.
 
+Minimum level for debugging: only message with the chosen level of severity or above will be logged for debugging. All others are ignored. This makes for a less verbose output.
+Debug output class: this makes it possible to create a custom class for rendering the debug output. This class will be used instead of tx_displaycontroller_debugger. It should be properly declared in some extension's ext_autoload.php file. It must extend  tx_displaycontroller_debugger and override the render() method.
 Checking the installation
 The loading order of the various Tesseract components is of importance. The best way to check if everything is properly installed is to create a new Display Controller content element and check the "Data Objects" tab.
 If no wizards icons appear for adding new Tesseract components, it means that the "displaycontroller" extension is loaded after the others (like "dataquery", "datafilter", etc.). You should change the loading order of the extensions so that "displaycontroller" comes before such components (but still after "tesseract" itself).

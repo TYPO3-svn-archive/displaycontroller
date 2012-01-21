@@ -1,5 +1,5 @@
 <?php
-/* 
+/*
  * Register necessary class names with autoloader
  *
  * $Id$
@@ -11,5 +11,6 @@ return array(
 	'tx_displaycontroller'				=> $extensionPath . 'class.tx_displaycontroller.php',
 	'tx_displaycontroller_realurl'		=> $extensionPath . 'class.tx_displaycontroller_realurl.php',
 	'tx_displaycontroller_service'		=> $extensionPath . 'class.tx_displaycontroller_service.php',
+	'tx_displaycontroller_debugger'		=> $extensionPath . 'class.tx_displaycontroller_debugger.php',
 );
 ?>

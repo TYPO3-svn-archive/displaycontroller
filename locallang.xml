@@ -6,6 +6,7 @@
 	</meta>
 	<data type="array">
 		<languageKey index="default" type="array">
+			<label index="debugging">Debugging</label>
 			<label index="config_debug">Debug: Choose debug settings. Debugging output can be directed to the controller's output (e.g. the frontend), to the Developer's Log (requires an extension like "devlog") or both.</label>
 			<label index="config_debug.none">None</label>
 			<label index="config_debug.output">To output</label>
@@ -17,6 +18,7 @@
 			<label index="minDebugLevel.notice">Notice</label>
 			<label index="minDebugLevel.warning">Warning</label>
 			<label index="minDebugLevel.error">Error</label>
+			<label index="debugger">Debug output class: Enter a class name to replace the default debugging output class. The class must be autoloaded and extend tx_displaycontroller_debugger.</label>
 			<label index="exception.no_component">No component of type %1$s and level %2$d found.</label>
 			<label index="exception.no_provider">No provider defined.</label>
 			<label index="exception.no_filter">No data filter found.</label>
