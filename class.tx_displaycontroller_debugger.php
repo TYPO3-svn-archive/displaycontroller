@@ -37,9 +37,18 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 	 * @var t3lib_PageRenderer Reference to the current page renderer object
 	 */
 	protected $pageRenderer;
+	protected $firstCall = TRUE;
+	protected $cssCode = '';
 
 	public function __construct(t3lib_PageRenderer $pageRenderer) {
 		$this->pageRenderer = $pageRenderer;
+			// Prepare CSS code based on t3skin, if loaded
+		if (t3lib_extMgm::isLoaded('t3skin')) {
+			$this->cssCode = t3lib_div::getUrl(t3lib_extMgm::extPath('t3skin') . 'stylesheets/structure/element_message.css');
+			$this->cssCode .= t3lib_div::getUrl(t3lib_extMgm::extPath('t3skin') . 'stylesheets/visual/element_message.css');
+		}
+			// Load the Kint class for dumping debug data
+		require_once(t3lib_extMgm::extPath('displaycontroller', 'lib/kint/Kint.class.php'));
 	}
 
 	/**
@@ -49,16 +58,14 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 	 * @return string Debug output
 	 */
 	public function render(array $messageQueue) {
-			// Add t3skin stylesheets for proper display, if t3skin is loaded
-		if (t3lib_extMgm::isLoaded('t3skin')) {
-			$this->pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/structure/element_message.css');
-			$this->pageRenderer->addCssFile(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'stylesheets/visual/element_message.css');
-		}
-		require_once(t3lib_extMgm::extPath('displaycontroller', 'lib/kint/Kint.class.php'));
-			// Prepare the output and return it
 		$debugOutput = '';
+			// If this is the first debug call, write the necessary CSS code
+		if ($this->firstCall) {
+			$debugOutput .= '<style>' . $this->cssCode . '</style>';
+			$this->firstCall = FALSE;
+		}
+			// Prepare the output and return it
 		foreach ($messageQueue as $messageData) {
-			t3lib_utility_Debug::debug($messageData, 'messages');
 			$debugOutput .= $messageData['message']->render();
 			if ($messageData['data'] !== NULL) {
 				if (is_array($messageData['data'])) {
