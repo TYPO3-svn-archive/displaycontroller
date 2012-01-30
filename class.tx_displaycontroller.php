@@ -771,10 +771,20 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			$debugger = NULL;
 				// If a custom debugging class is declared, get an instance of it
 			if (!empty($this->extensionConfiguration['debugger'])) {
-				$debugger = t3lib_div::makeInstance(
-					$this->extensionConfiguration['debugger'],
-					$GLOBALS['TSFE']->getPageRenderer()
-				);
+				try {
+					$debugger = t3lib_div::makeInstance(
+						$this->extensionConfiguration['debugger'],
+						$GLOBALS['TSFE']->getPageRenderer()
+					);
+				}
+				catch (Exception $e) {
+					$this->addMessage(
+						$this->extKey,
+						$this->pi_getLL('error.no_custom_debugger_info'),
+						$this->pi_getLL('error.no_custom_debugger'),
+						t3lib_FlashMessage::WARNING
+					);
+				}
 			}
 				// If no custom debugger class is defined or if it was not of the right type,
 				// instantiate the default class

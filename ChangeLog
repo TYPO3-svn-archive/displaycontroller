@@ -1,6 +1,7 @@
 2012-01-30 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Implemented partial refactoring of tx_displaycontroller::main(), resolves #33527
+	* Improved check for debugger class existence, resolves #33528
 
 2012-01-21 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 

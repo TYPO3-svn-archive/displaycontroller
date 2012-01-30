@@ -31,6 +31,8 @@
 			<label index="error.secondary_provider_interrupt">Secondary provider set passStructure to false</label>
 			<label index="error.incompatible_provider_consumer">Incompatible structures between primary provider and consumer.</label>
 			<label index="error.no_consumer">Data Consumer not found</label>
+			<label index="error.no_custom_debugger">Custom debugger not found</label>
+			<label index="error.no_custom_debugger_info">Falling back on default. Install the appropriate extension or update the extension configuration.</label>
 			<label index="info.primary_filter">Primary filter</label>
 			<label index="info.secondary_filter">Secondary filter</label>
 			<label index="info.calculated_filter">Calculated filter structure</label>
