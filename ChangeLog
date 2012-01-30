@@ -2,6 +2,7 @@
 
 	* Implemented partial refactoring of tx_displaycontroller::main(), resolves #33527
 	* Improved check for debugger class existence, resolves #33528
+	* Added cloning of secondary provider to avoid prodivers overriding each other, resolves #33529
 
 2012-01-21 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 

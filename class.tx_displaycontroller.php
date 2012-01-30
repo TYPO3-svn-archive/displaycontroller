@@ -338,7 +338,8 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 					$secondaryProviderData = $this->getComponentData('provider', 2);
 					try {
 							// Get the corresponding component
-						$secondaryProvider = $this->getDataProvider($secondaryProviderData);
+						$secondaryProviderObject = $this->getDataProvider($secondaryProviderData);
+						$secondaryProvider = clone $secondaryProviderObject;
 						$secondaryProvider->setDataFilter($secondaryFilter);
 					}
 						// Something happened, skip passing the structure to the Data Consumer
