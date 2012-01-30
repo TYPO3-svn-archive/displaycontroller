@@ -179,51 +179,7 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 		$filter = array();
 
 			// Handle the secondary provider first
-		if (!empty($this->cObj->data['tx_displaycontroller_provider2'])) {
-				// Get the secondary data filter, if any
-			$secondaryFilter = $this->getEmptyFilter();
-			if (!empty($this->cObj->data['tx_displaycontroller_datafilter2'])) {
-				$secondaryFilter = $this->defineAdvancedFilter('secondary');
-				$this->addMessage(
-					$this->extKey,
-					$this->pi_getLL('info.calculated_filter'),
-					$this->pi_getLL('info.secondary_filter'),
-					t3lib_FlashMessage::INFO,
-					$secondaryFilter
-				);
-			}
-				// Get the secondary provider if necessary,
-				// i.e. if the process was not blocked by the advanced filter (by setting the passStructure flag to false)
-			if ($this->passStructure) {
-				try {
-						// Get the secondary provider's information
-					$secondaryProviderData = $this->getComponentData('provider', 2);
-					try {
-							// Get the corresponding component
-						$secondaryProvider = $this->getDataProvider($secondaryProviderData);
-						$secondaryProvider->setDataFilter($secondaryFilter);
-					}
-						// Something happened, skip passing the structure to the Data Consumer
-					catch (Exception $e) {
-						$this->passStructure = FALSE;
-						$this->addMessage(
-							$this->extKey,
-							$e->getMessage() . ' (' . $e->getCode() . ')',
-							$this->pi_getLL('error.secondary_provider_interrupt'),
-							t3lib_FlashMessage::WARNING
-						);
-					}
-				}
-				catch (Exception $e) {
-					$this->addMessage(
-						$this->extKey,
-						$e->getMessage() . ' (' . $e->getCode() . ')',
-						$this->pi_getLL('error.no_secondary_provider'),
-						t3lib_FlashMessage::ERROR
-					);
-				}
-			}
-		}
+		$secondaryProvider = $this->initializeSecondaryProvider();
 
 			// Handle the primary provider
 			// Define the filter (if any)
@@ -348,28 +304,65 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 				t3lib_FlashMessage::ERROR
 			);
 		}
+
 			// If debugging to output is active, prepend content with debugging messages
-		if ($this->debugToOutput) {
-				/** @var $debugger tx_displaycontroller_debugger */
-			$debugger = NULL;
-				// If a custom debugging class is declared, get an instance of it
-			if (!empty($this->extensionConfiguration['debugger'])) {
-				$debugger = t3lib_div::makeInstance(
-					$this->extensionConfiguration['debugger'],
-					$GLOBALS['TSFE']->getPageRenderer()
-				);
-			}
-				// If no custom debugger class is defined or if it was not of the right type,
-				// instantiate the default class
-			if ($debugger === NULL || !($debugger instanceof tx_displaycontroller_debugger)) {
-				$debugger = t3lib_div::makeInstance(
-					'tx_displaycontroller_debugger',
-					$GLOBALS['TSFE']->getPageRenderer()
-				);
-			}
-			$content = $debugger->render($this->messageQueue) . $content;
-		}
+		$content = $this->writeDebugOutput() . $content;
 		return $content;
+	}
+
+	/**
+	 * Initializes the secondary provider, possibly with its secondary filter
+	 *
+	 * @return null|tx_tesseract_dataprovider
+	 */
+	protected function initializeSecondaryProvider() {
+		$secondaryProvider = NULL;
+		if (!empty($this->cObj->data['tx_displaycontroller_provider2'])) {
+				// Get the secondary data filter, if any
+			$secondaryFilter = $this->getEmptyFilter();
+			if (!empty($this->cObj->data['tx_displaycontroller_datafilter2'])) {
+				$secondaryFilter = $this->defineAdvancedFilter('secondary');
+				$this->addMessage(
+					$this->extKey,
+					$this->pi_getLL('info.calculated_filter'),
+					$this->pi_getLL('info.secondary_filter'),
+					t3lib_FlashMessage::INFO,
+					$secondaryFilter
+				);
+			}
+				// Get the secondary provider if necessary,
+				// i.e. if the process was not blocked by the advanced filter (by setting the passStructure flag to false)
+			if ($this->passStructure) {
+				try {
+						// Get the secondary provider's information
+					$secondaryProviderData = $this->getComponentData('provider', 2);
+					try {
+							// Get the corresponding component
+						$secondaryProvider = $this->getDataProvider($secondaryProviderData);
+						$secondaryProvider->setDataFilter($secondaryFilter);
+					}
+						// Something happened, skip passing the structure to the Data Consumer
+					catch (Exception $e) {
+						$this->passStructure = FALSE;
+						$this->addMessage(
+							$this->extKey,
+							$e->getMessage() . ' (' . $e->getCode() . ')',
+							$this->pi_getLL('error.secondary_provider_interrupt'),
+							t3lib_FlashMessage::WARNING
+						);
+					}
+				}
+				catch (Exception $e) {
+					$this->addMessage(
+						$this->extKey,
+						$e->getMessage() . ' (' . $e->getCode() . ')',
+						$this->pi_getLL('error.no_secondary_provider'),
+						t3lib_FlashMessage::ERROR
+					);
+				}
+			}
+		}
+		return $secondaryProvider;
 	}
 
 	/**
@@ -764,6 +757,36 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Prepares the debugging output, if so configured, and returns it
+	 *
+	 * @return string HTML to output
+	 */
+	protected function writeDebugOutput() {
+		$output = '';
+		if ($this->debugToOutput) {
+				/** @var $debugger tx_displaycontroller_debugger */
+			$debugger = NULL;
+				// If a custom debugging class is declared, get an instance of it
+			if (!empty($this->extensionConfiguration['debugger'])) {
+				$debugger = t3lib_div::makeInstance(
+					$this->extensionConfiguration['debugger'],
+					$GLOBALS['TSFE']->getPageRenderer()
+				);
+			}
+				// If no custom debugger class is defined or if it was not of the right type,
+				// instantiate the default class
+			if ($debugger === NULL || !($debugger instanceof tx_displaycontroller_debugger)) {
+				$debugger = t3lib_div::makeInstance(
+					'tx_displaycontroller_debugger',
+					$GLOBALS['TSFE']->getPageRenderer()
+				);
+			}
+			$output = $debugger->render($this->messageQueue);
+		}
+		return $output;
 	}
 }
 
