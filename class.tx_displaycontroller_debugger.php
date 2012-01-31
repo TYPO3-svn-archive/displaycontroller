@@ -46,6 +46,9 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 		if (t3lib_extMgm::isLoaded('t3skin')) {
 			$this->cssCode = t3lib_div::getUrl(t3lib_extMgm::extPath('t3skin') . 'stylesheets/structure/element_message.css');
 			$this->cssCode .= t3lib_div::getUrl(t3lib_extMgm::extPath('t3skin') . 'stylesheets/visual/element_message.css');
+				// Adjust path to icons
+			$replacement = t3lib_div::locationHeaderUrl(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'icons');
+			$this->cssCode = str_replace('../../icons', $replacement, $this->cssCode);
 		}
 			// Load the Kint class for dumping debug data
 		require_once(t3lib_extMgm::extPath('displaycontroller', 'lib/kint/Kint.class.php'));
