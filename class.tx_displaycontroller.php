@@ -767,7 +767,8 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 	 */
 	protected function writeDebugOutput() {
 		$output = '';
-		if ($this->debugToOutput) {
+			// Output only if activated and if a BE user is logged in
+		if ($this->debugToOutput && isset($GLOBALS['BE_USER'])) {
 				/** @var $debugger tx_displaycontroller_debugger */
 			$debugger = NULL;
 				// If a custom debugging class is declared, get an instance of it
