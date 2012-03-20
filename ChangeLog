@@ -1,6 +1,7 @@
 2012-03-20 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Added possibility to configure preview for "Save and view" action, resolves #34594
+	* Changed code to delegate creation of empty data structure to providers, resolves #10980
 
 2012-02-06 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
