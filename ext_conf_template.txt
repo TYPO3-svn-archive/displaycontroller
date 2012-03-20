@@ -1,5 +1,8 @@
 # customsubcategory=debugging=LLL:EXT:displaycontroller/locallang.xml:debugging
 
+# cat=basic/enable/; type=boolean; label=LLL:EXT:displaycontroller/locallang.xml:saveAndViewAction
+saveAndViewAction = 0
+
 # cat=basic/debugging/; type=options[LLL:EXT:displaycontroller/locallang.xml:config_debug.none=none,LLL:EXT:displaycontroller/locallang.xml:config_debug.output=output,LLL:EXT:displaycontroller/locallang.xml:config_debug.devlog=devlog,LLL:EXT:displaycontroller/locallang.xml:config_debug.both=both]; label=LLL:EXT:displaycontroller/locallang.xml:config_debug
 debug = none
 

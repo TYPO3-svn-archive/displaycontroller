@@ -7,6 +7,7 @@
 	<data type="array">
 		<languageKey index="default" type="array">
 			<label index="debugging">Debugging</label>
+			<label index="saveAndViewAction">Act on save and view: if this is activated, the Display Controller will try to show a preview of the saved record in the frontend (requires additional TSconfig, please refer to the manual).</label>
 			<label index="config_debug">Debug: Choose debug settings. Debugging output can be directed to the controller's output (e.g. the frontend), to the Developer's Log (requires an extension like "devlog") or both.</label>
 			<label index="config_debug.none">None</label>
 			<label index="config_debug.output">To output</label>

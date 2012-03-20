@@ -57,4 +57,7 @@ t3lib_extMgm::addService($_EXTKEY,  'datacontroller' /* sv type */,  'tx_display
 			'className' => 'tx_displaycontroller_service',
 		)
 	);
+
+	// Register the function to preview data with TCEmain hook
+$GLOBALS ['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass']['tx_displaycontroller'] = 'EXT:displaycontroller/hooks/class.tx_displaycontroller_hooks_tcemain.php:&tx_displaycontroller_hooks_tcemain';
 ?>

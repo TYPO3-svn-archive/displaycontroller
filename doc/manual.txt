@@ -29,21 +29,22 @@ Query parameters	8
 Configuration	9
 TypoScript	9
 Redirection mechanism	9
-Hooks	10
-RealURL	10
-Tutorial	12
-Scenario	12
-Preparing for work	12
-Querying the database	12
-Preparing a template for display	13
-Fitting it all together	14
-Improving the display	16
-Next steps	18
-Frequently Asked Questions	19
-Troubleshooting	19
-Known problems	20
-To-Do list	21
-Appendix A – Tutorial answers	22
+Page TSconfig	10
+Hooks	11
+RealURL	11
+Tutorial	13
+Scenario	13
+Preparing for work	13
+Querying the database	13
+Preparing a template for display	14
+Fitting it all together	15
+Improving the display	17
+Next steps	19
+Frequently Asked Questions	20
+Troubleshooting	20
+Known problems	21
+To-Do list	22
+Appendix A – Tutorial answers	23
 
 Introduction
 What does it do?
@@ -196,6 +197,41 @@ plugin.tx_displaycontroller.redirect.enable = 0
 
 or cancel it altogether:
 plugin.tx_displaycontroller.redirect >
+Page TSconfig
+The Display Controller comes with a Page TSconfig option that makes it possible to act on the "Save and view" button in the BE and call up a properly configured preview page for any record (assuming that page contains appropriately configured Tesseract components, of course).
+The basic syntax is:
+tx_displaycontroller.tx_foo_bars {
+	previewPid = 1498
+	parameters = &item=###id###&L=###lang###
+}
+
+where "tx_foo_bars" is the name of the table. The properties are:
+Property:
+Data type:
+Description:
+Default:
+previewPid
+integer
+The id of the page that should be called up for preview.
+
+parameters
+string
+The list of query string variables that should be added to the call to the preview page, so that it receives all the information that it needs to display the record being "saved and viewed".
+
+Three markers can be used in this string:
+###id### is replaced by the id of the record that has just been saved
+###table### is replaced by the name of the table being handled
+###lang### is replaced by the id of the current language (0 for the default language)
+
+The Display Controller automatically adds "&no_cache=1".
+&tx_displaycontroller[table]=###table###&tx_displaycontroller[showUid]=###id###&L=###lang###
+
+Whatever syntax you put in the parameters should obviously match the Data Filter used on the preview page, and whatever Data Consumer exists there should also be able to display a record from the given table.
+Example
+Given the following Page TSconfig:
+
+when the "Save and view" button is hit
+the following URL is called up:
 Hooks
 There's one hook defined in the Display Controller. It can be used to manipulate filters after their initialization. At this point a filter may either be empty or already have some structure read from the session cache.
 The hook must be registered that way:
