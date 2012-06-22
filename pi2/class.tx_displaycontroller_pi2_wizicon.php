@@ -60,7 +60,13 @@ class tx_displaycontroller_pi2_wizicon {
 	 */
 	function includeLocalLang()	{
 		$llFile = t3lib_extMgm::extPath('displaycontroller') . 'locallang.xml';
-		$LOCAL_LANG = t3lib_div::readLLXMLfile($llFile, $GLOBALS['LANG']->lang);
+		if (class_exists('t3lib_l10n_parser_Llxml')) {
+				/** @var $l10nParser t3lib_l10n_parser_Llxml */
+			$l10nParser = t3lib_div::makeInstance('t3lib_l10n_parser_Llxml');
+			$LOCAL_LANG = $l10nParser->getParsedData($llFile, $GLOBALS['LANG']->lang);
+		} else {
+			$LOCAL_LANG = t3lib_div::readLLXMLfile($llFile, $GLOBALS['LANG']->lang);
+		}
 
 		return $LOCAL_LANG;
 	}

@@ -509,11 +509,11 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 	/**
 	 * This method gets a filter structure from a referenced Data Filter
 	 *
-	 * @param	string	$type: type of filter, either primary (default) or secondary
-	 * @return	array	A filter structure
+	 * @param string $type Type of filter, either primary (default) or secondary
+	 * @throws Exception
+	 * @return array A filter structure
 	 */
 	protected function defineAdvancedFilter($type = 'primary') {
-		$filter = array();
 			// Define rank based on call parameter
 		$rank = 1;
 		$checkField = 'tx_displaycontroller_emptyfilter';
@@ -621,9 +621,10 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 	 * Retrieves information about a component related to the controller
 	 * An exception is thrown if none is found
 	 *
-	 * @param	string	$component: type of component (provider, consumer, filter)
-	 * @param	integer	$rank: level of the component (1 = primary, 2 = secondary)
-	 * @return	array	Database record from the MM-table linking the controller to its components
+	 * @param string $component Type of component (provider, consumer, filter)
+	 * @param integer $rank Level of the component (1 = primary, 2 = secondary)
+	 * @throws Exception
+	 * @return array Database record from the MM-table linking the controller to its components
 	 */
 	protected function getComponentData($component, $rank = 1) {
 			// Assemble base WHERE clause
@@ -657,7 +658,8 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 	 *
 	 * @param array $providerInfo Information about a provider related to the controller
 	 * @param tx_tesseract_dataprovider $secondaryProvider An instance of an object with a DataProvider interface
-	 * @return tx_tesseract_dataprovider Object with a DataProvider interface
+	 * @throws Exception
+	 * @return \tx_tesseract_dataprovider Object with a DataProvider interface
 	 */
 	public function getDataProvider($providerInfo, tx_tesseract_dataprovider $secondaryProvider = null) {
 			// Get the related data providers

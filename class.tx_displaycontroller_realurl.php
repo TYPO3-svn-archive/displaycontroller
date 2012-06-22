@@ -39,7 +39,7 @@ class tx_displaycontroller_realurl {
 	protected $defaultValueEmpty = 'unknown';
 	/**
 	 * Extension configuration
-	 * 
+	 *
 	 * @var	array
 	 */
 	protected $configuration = array();
@@ -62,7 +62,7 @@ class tx_displaycontroller_realurl {
 		if (isset($GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_displaycontroller.']['detailView.']['postVarSets'])) {
 			$this->postVarSets = $GLOBALS['TSFE']->tmpl->setup['plugin.']['tx_displaycontroller.']['detailView.']['postVarSets'];
 		}
-		
+
 		if (!empty($parameters['value'])) {
 			if ($parameters['decodeAlias']) {
 				return $this->decodeAlias($parameters, $ref);
@@ -75,8 +75,8 @@ class tx_displaycontroller_realurl {
 	/**
 	 * This method takes a speaking url alias and returns a primarey key for the right table
 	 *
-	 * @param	array		$parameters: parameters passed by RealURL
-	 * @param	object		$ref: reference to the RealURL object
+	 * @param array $parameters Parameters passed by RealURL
+	 * @param tx_realurl $ref Reference to the RealURL object
 	 *
 	 * @return	integer		primary key
 	 */
@@ -117,7 +117,6 @@ class tx_displaycontroller_realurl {
 	 * @return	string	speaking URL
 	 */
 	protected function encodeAlias($parameters, &$ref) {
-		$cleanAlias = '';
 		$table = '';
 		$id = 0;
 
@@ -252,14 +251,15 @@ class tx_displaycontroller_realurl {
 	}
 
 	/**
-	 * This method gets the relevant name field from a given table and returns a cleaned up (RealURL-wise) alias
+	 * Gets the relevant name field from a given table and returns a cleaned up (RealURL-wise) alias
 	 *
-	 * @param	string		$table: name of the table to query
-	 * @param	string		$field_id: name of the primary key
-	 * @param	integer		$id: value of the primary key
-	 * @param	object		$ref: reference to the RealURL object
+	 * @param string $table Name of the table to query
+	 * @param string $field_alias Nae of the alias field
+	 * @param string $field_id Name of the primary key
+	 * @param integer $id Value of the primary key
+	 * @param tx_realurl $ref Reference to the RealURL object
 	 *
-	 * @return	string		cleaned up alias for the item
+	 * @return    string        cleaned up alias for the item
 	 */
 	protected function getItemAlias($table, $field_alias, $field_id, $id, $ref) {
 
@@ -322,7 +322,7 @@ class tx_displaycontroller_realurl {
 
 	/**
 	 * This method tries to find a language configuration inside the RealURL configuration
-	 * 
+	 *
 	 * @param	array	$conf: RealURL configuration
 	 */
 	protected function getLanguageConfiguration($conf) {

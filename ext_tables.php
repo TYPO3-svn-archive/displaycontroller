@@ -222,28 +222,14 @@ $tempColumns = array(
 t3lib_extMgm::addTCAcolumns('tt_content', $tempColumns, 1);
 
 	// Define showitem property for both plug-ins, depending on TYPO3 version
-$version = class_exists('t3lib_utility_VersionNumber')
-        ? t3lib_utility_VersionNumber::convertVersionNumberToInteger(TYPO3_version)
-        : t3lib_div::int_from_ver(TYPO3_version);
-if ($version >= 4005000) {
-    // Code for 4.5 and above
-
-	$showItem = '--palette--;LLL:EXT:cms/locallang_ttc.xml:palette.general;general, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.header;header,';
-	$showItem .= '--div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2,';
-	$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.appearance, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.frames;frames, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.textlayout;textlayout,';
-	$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.access;access,';
-	$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended';
-
-} else {
-    // Code for older versions
-
-	$showItem = 'CType;;4;button,hidden,1-1-1, header;;3;;2-2-2,linkToTop;;;;3-3-3';
-	$showItem .= ', --div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2';
-	$showItem .= ', --div--;LLL:EXT:cms/locallang_tca.xml:pages.tabs.access, starttime, endtime, fe_group';
-}
-
+$showItem = '--palette--;LLL:EXT:cms/locallang_ttc.xml:palette.general;general, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.header;header,';
+$showItem .= '--div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2,';
+$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.appearance, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.frames;frames, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.textlayout;textlayout,';
+$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.access;access,';
+$showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended';
 $TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $showItem;
 $TCA['tt_content']['types'][$_EXTKEY . '_pi2']['showitem'] = $showItem;
+
 $TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY . '_pi1'] = t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif';
 $TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY . '_pi2'] = t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif';
 $TCA['tt_content']['palettes'][$_EXTKEY . '_1'] = array('showitem' => 'tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_emptyfilter');
