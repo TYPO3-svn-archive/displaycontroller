@@ -230,10 +230,24 @@ $showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended';
 $TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $showItem;
 $TCA['tt_content']['types'][$_EXTKEY . '_pi2']['showitem'] = $showItem;
 
-$TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY . '_pi1'] = t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif';
-$TCA['tt_content']['ctrl']['typeicons'][$_EXTKEY . '_pi2'] = t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif';
 $TCA['tt_content']['palettes'][$_EXTKEY . '_1'] = array('showitem' => 'tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_emptyfilter');
 $TCA['tt_content']['palettes'][$_EXTKEY . '_2'] = array('showitem' => 'tx_displaycontroller_datafilter2, tx_displaycontroller_emptyfilter2');
+
+	// Register icons for content type
+	// Define classes and register icon files with Sprite Manager
+$TCA['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi1'] =  'extensions-displaycontroller-type-controller';
+$TCA['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi2'] =  'extensions-displaycontroller-type-controller';
+
+	// Complex condition to make sure the icons are available during frontend editing...
+	// (code taken from TemplaVoilà
+if (TYPO3_MODE == 'BE' ||
+	(TYPO3_MODE == 'FE' && isset($GLOBALS['BE_USER']) && method_exists($GLOBALS['BE_USER'], 'isFrontendEditingActive')  && $GLOBALS['BE_USER']->isFrontendEditingActive())
+) {
+	$icons = array(
+		'type-controller' => t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif'
+	);
+	t3lib_SpriteManager::addSingleIcons($icons, $_EXTKEY);
+}
 
 	// Add context sensitive help (csh) for the new fields
 t3lib_extMgm::addLLrefForTCAdescr('tt_content', 'EXT:' . $_EXTKEY . '/locallang_csh_ttcontent.xml');
