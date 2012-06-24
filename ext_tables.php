@@ -238,13 +238,12 @@ $TCA['tt_content']['palettes'][$_EXTKEY . '_2'] = array('showitem' => 'tx_displa
 $TCA['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi1'] =  'extensions-displaycontroller-type-controller';
 $TCA['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi2'] =  'extensions-displaycontroller-type-controller';
 
-	// Complex condition to make sure the icons are available during frontend editing...
-	// (code taken from TemplaVoilà
+	// Register icon in the BE and for FE editing (code taken from TemplaVoilà)
 if (TYPO3_MODE == 'BE' ||
 	(TYPO3_MODE == 'FE' && isset($GLOBALS['BE_USER']) && method_exists($GLOBALS['BE_USER'], 'isFrontendEditingActive')  && $GLOBALS['BE_USER']->isFrontendEditingActive())
 ) {
 	$icons = array(
-		'type-controller' => t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif'
+		'type-controller' => t3lib_extMgm::extRelPath($_EXTKEY) . 'displaycontroller_typeicon.png'
 	);
 	t3lib_SpriteManager::addSingleIcons($icons, $_EXTKEY);
 }
@@ -253,8 +252,8 @@ if (TYPO3_MODE == 'BE' ||
 t3lib_extMgm::addLLrefForTCAdescr('tt_content', 'EXT:' . $_EXTKEY . '/locallang_csh_ttcontent.xml');
 
 	// Register plug-ins (pi1 is cached, pi2 is not cached)
-t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY . '_pi1', t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif'), 'CType');
-t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi2', $_EXTKEY . '_pi2', t3lib_extMgm::extRelPath($_EXTKEY) . 'ext_typeicon.gif'), 'CType');
+t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi1', $_EXTKEY . '_pi1', t3lib_extMgm::extRelPath($_EXTKEY) . 'displaycontroller_typeicon.png'), 'CType');
+t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi2', $_EXTKEY . '_pi2', t3lib_extMgm::extRelPath($_EXTKEY) . 'displaycontroller_typeicon.png'), 'CType');
 	// Register wizards for plug-ins
 if (TYPO3_MODE == 'BE') {
 	$TBE_MODULES_EXT['xMOD_db_new_content_el']['addElClasses']['tx_displaycontroller_pi1_wizicon'] = t3lib_extMgm::extPath($_EXTKEY) . 'pi1/class.tx_displaycontroller_pi1_wizicon.php';

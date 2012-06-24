@@ -1,3 +1,7 @@
+2012-06-24 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Switched to the sprite manager for plugin icons, resolves #38304
+
 2012-06-22 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Verified compatibility with TYPO3 4.7, raised requirement to TYPO3 4.5, resolves #38291
