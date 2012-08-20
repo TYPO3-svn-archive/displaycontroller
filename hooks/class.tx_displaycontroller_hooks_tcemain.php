@@ -100,7 +100,7 @@ class tx_displaycontroller_hooks_tcemain {
 					$moreAdditionalParameters
 				);
 					// Assign the additional parameters to the pop-up data
-				$GLOBALS['_POST']['popViewId_addParams'] = $additionalParameters;
+				$GLOBALS['_POST']['popViewId_addParams'] = $additionalParameters . '&tx_displaycontroller_preview=1';
 			}
 		}
 	}
