@@ -1,3 +1,7 @@
+2012-09-03 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Released to TER as version 1.4.1
+
 2012-08-20 Roberto Presedo (Cobweb)  <typo3@cobweb.ch>
 
 	* Fixed bug with hidden records while previewing from the BE, resolves #39991
