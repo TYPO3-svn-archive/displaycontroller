@@ -129,10 +129,10 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 		$this->piVars = t3lib_div::_GPmerged($this->prefixId);
 			// Load the language labels
 		$this->pi_loadLL();
-			// Show Hidden Records, if logged in BE and are previewing a record
-		if ( isset($GLOBALS['BE_USER']) && t3lib_div::_GP('tx_displaycontroller_preview')) {
+			// Show hidden records, if logged in BE and  previewing a record
+		if (isset($GLOBALS['BE_USER']) && t3lib_div::_GP('tx_displaycontroller_preview')) {
 				// We show all hidden records
-				$GLOBALS['TSFE']->showHiddenRecords = 1;
+			$GLOBALS['TSFE']->showHiddenRecords = 1;
 		}
 			// Finally load some additional data into the parser
 		$this->loadParserData();
