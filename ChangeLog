@@ -1,3 +1,7 @@
+2013-04-09 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+
+	* Added flexform option for local debugging, resolves #33212
+
 2012-09-03 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Released to TER as version 1.4.1

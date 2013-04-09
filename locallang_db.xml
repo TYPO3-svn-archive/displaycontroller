@@ -11,6 +11,7 @@
 			<label index="tt_content.CType_pi1.description">Simple FE plugin for displaying output of Tesseract components. Stored into page cache.</label>
 			<label index="tt_content.CType_pi2.description">Simple FE plugin for displaying output of Tesseract components. Not stored into page cache.</label>
 			<label index="tabs.dataobjects">Data Objects</label>
+			<label index="tabs_options">Options</label>
 			<label index="tt_content.tx_displaycontroller_provider">Primary Data Provider</label>
 			<label index="tt_content.tx_displaycontroller_provider2">Secondary Data Provider</label>
 			<label index="tt_content.tx_displaycontroller_consumer">Data Consumer</label>
@@ -28,6 +29,8 @@
 			<label index="wizards.edit_datafilter">Edit Data Filter</label>
 			<label index="wizards.edit_dataprovider">Edit Data Provider</label>
 			<label index="wizards.edit_dataconsumer">Edit Data Consumer</label>
+			<label index="options_tab_general">General</label>
+			<label index="options_debug">Debug</label>
 		</languageKey>
 		<languageKey index="fr" type="array">
 			<label index="tt_content.CType_pi1">Contrôleur d'affichage (avec cache)</label>

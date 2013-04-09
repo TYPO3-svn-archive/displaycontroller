@@ -1,0 +1,44 @@
+<T3DataStructure>
+	<meta>
+		<langDisable>1</langDisable>
+	</meta>
+	<sheets>
+		<sDEF>
+			<ROOT>
+				<TCEforms>
+					<sheetTitle>LLL:EXT:displaycontroller/locallang_db.xml:options_tab_general</sheetTitle>
+				</TCEforms>
+				<type>array</type>
+				<el>
+					<debug>
+						<TCEforms>
+							<label>LLL:EXT:displaycontroller/locallang_db.xml:options_debug</label>
+							<config>
+								<type>select</type>
+								<items type="array">
+									<numIndex index="0" type="array">
+										<numIndex index="0">LLL:EXT:displaycontroller/locallang.xml:config_debug.none</numIndex>
+										<numIndex index="1">none</numIndex>
+									</numIndex>
+									<numIndex index="1" type="array">
+										<numIndex index="0">LLL:EXT:displaycontroller/locallang.xml:config_debug.output</numIndex>
+										<numIndex index="1">output</numIndex>
+									</numIndex>
+									<numIndex index="2" type="array">
+										<numIndex index="0">LLL:EXT:displaycontroller/locallang.xml:config_debug.devlog</numIndex>
+										<numIndex index="1">devlog</numIndex>
+									</numIndex>
+									<numIndex index="3" type="array">
+										<numIndex index="0">LLL:EXT:displaycontroller/locallang.xml:config_debug.both</numIndex>
+										<numIndex index="1">both</numIndex>
+									</numIndex>
+								</items>
+								<default>none</default>
+							</config>
+						</TCEforms>
+					</debug>
+				</el>
+			</ROOT>
+		</sDEF>
+	</sheets>
+</T3DataStructure>

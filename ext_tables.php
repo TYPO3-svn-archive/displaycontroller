@@ -221,9 +221,17 @@ $tempColumns = array(
 );
 t3lib_extMgm::addTCAcolumns('tt_content', $tempColumns, 1);
 
+	// Add FlexForm options for both controllers
+t3lib_extMgm::addPiFlexFormValue('*', 'FILE:EXT:' . $_EXTKEY . '/Configuration/FlexForm/Options.xml', $_EXTKEY . '_pi1');
+t3lib_extMgm::addPiFlexFormValue('*', 'FILE:EXT:' . $_EXTKEY . '/Configuration/FlexForm/Options.xml', $_EXTKEY . '_pi2');
+
+	// Add context sensitive help (csh) for the FlexForm
+t3lib_extMgm::addLLrefForTCAdescr('tt_content.pi_flexform.displaycontroller_pi1.CType', 'EXT:' . $_EXTKEY . '/locallang_csh_options.xml');
+
 	// Define showitem property for both plug-ins, depending on TYPO3 version
 $showItem = '--palette--;LLL:EXT:cms/locallang_ttc.xml:palette.general;general, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.header;header,';
 $showItem .= '--div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs.dataobjects, tx_displaycontroller_consumer;;;;1-1-1, tx_displaycontroller_provider;;' . $_EXTKEY . '_1;;2-2-2,  tx_displaycontroller_provider2;;' . $_EXTKEY . '_2;;2-2-2, tx_displaycontroller_emptyprovider2,';
+$showItem .= '--div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs_options, pi_flexform,';
 $showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.appearance, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.frames;frames, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.textlayout;textlayout,';
 $showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.access;access,';
 $showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended';

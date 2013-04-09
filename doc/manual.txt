@@ -3,7 +3,7 @@ EXT: Display Controller
 Extension Key: displaycontroller
 Language: en
 Keywords: forEditors, forIntermediates
-Copyright 2000-2012, François Suter, <typo3@cobweb.ch>
+Copyright 2000-2013, François Suter, <typo3@cobweb.ch>
 
 This document is published under the Open Content License
 available from http://www.opencontent.org/opl.shtml
@@ -25,12 +25,13 @@ Configuration	6
 Checking the installation	7
 Users manual	8
 The Display Controller	8
+Options	9
 Cached or not cached?	9
 Query parameters	9
-Configuration	10
-TypoScript	10
-Redirection mechanism	10
-Page TSconfig	11
+Configuration	11
+TypoScript	11
+Redirection mechanism	11
+Page TSconfig	12
 Hooks	13
 RealURL	13
 Tutorial	15
@@ -70,7 +71,7 @@ As of version 1.4.0, TYPO3 4.5 or more is required.
 
 Configuration
 Here are the configuration options available after installing the extension:
-Debug: Choose the type of debugging that you want. Debugging to the output will display status messages right before the Display Controller's normal output in the frontend (see screenshot below). Debugging to the Developer's Log will log messages provided you have an extension enabling that log (such as "devlog"). It's also possible to debug to both. Choosing "None" will turn all debugging off.
+Debug: Choose the type of debugging that you want. Debugging to the output will display status messages right before the Display Controller's normal output in the frontend (see screenshot below). Debugging to the Developer's Log will log messages provided you have an extension enabling that log (such as "devlog"). It's also possible to debug to both. Choosing "None" will turn all debugging off. Debugging can also be activated on a content element basis (see User Manual below).
 
 Minimum level for debugging: only message with the chosen level of severity or above will be logged for debugging. All others are ignored. This makes for a less verbose output.
 Debug output class: this makes it possible to create a custom class for rendering the debug output. This class will be used instead of tx_displaycontroller_debugger. It should be properly declared in some extension's ext_autoload.php file. It must extend  tx_displaycontroller_debugger and override the render() method.
@@ -91,6 +92,7 @@ Type of filter
 Choose the type of filter to apply to the Data Provider. The “Detail view” and “List view” options will tell the Display Controller to define a filter using the default GET/POST variable names for both views. Check the “Advanced filter” option if you want to apply a Data Filter record, which has to be selected separately (see below).
 Advanced Data Filter (primary)
 This is a reference to a Data Filter record that will apply to the Primary Data Provider. The field provides wizards for selecting a record, edit the current record or create a new Data Filter (one such wizard appears per available Data Filter type). In order for this filter to be active, it is also necessary to select “Advanced filter” from the “Type of filter” field (see above).
+
 If filter empty
 With this field you can choose the behavior of the Display Controller when the filter results in no conditions at all. This may happen with a search field, for example: when the use submits an empty search, the filter will also be empty. You must then choose whether you want to display everything or nothing in such a case.
 Secondary Data Provider
@@ -99,6 +101,8 @@ The Secondary Data Provider is meant to return lists of primary keys which will 
 A Data Filter can be applied to the Secondary Data Provider too. The same choice as described above must be made in case that filter ends up being empty.
 If secondary provider returns nothing
 As with Data Filters it is necessary to define the behavior of the Display Controller should the Secondary Data Provider (if defined) return nothing. Here again the choice is to display either everything or nothing.
+Options
+The "Options" tab contains additional, minor settings. For now it contains only a debug flag. This is the same as the flag from the extension configuration, but for the current content element only. This makes it easier, for example, to find information in the devlog, instead of having all Display Controllers produce debug output.
 Cached or not cached?
 The Display Controller fronted plug-in comes in two versions: one cached and one not cached. How to choose which one to use?
 The general rule is that the cached version should be preferred whenever possible for obvious performance reasons. However in some circumstances using the non-cached version cannot be avoided. A typical use of the non-cached version is when performing searches: if there are a lot of possible search criteria, it is not desirable or even possible to store every combination of search values into cache.

@@ -66,25 +66,7 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			// Read the general configuration and initialize the debug flags
 		$this->extensionConfiguration = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$this->extKey]);
 		if (!empty($this->extensionConfiguration['debug'])) {
-			$this->debug = TRUE;
-			switch ($this->extensionConfiguration['debug']) {
-				case 'output':
-					$this->debugToOutput = TRUE;
-					break;
-				case 'devlog':
-					$this->debugToDevLog = TRUE;
-					break;
-				case 'both':
-					$this->debugToOutput = TRUE;
-					$this->debugToDevLog = TRUE;
-					break;
-
-					// Turn off all debugging if no valid value was entered
-				default:
-					$this->debug = FALSE;
-					$this->debugToOutput = FALSE;
-					$this->debugToDevLog = FALSE;
-			}
+			$this->setDebugOptions($this->extensionConfiguration['debug']);
 		}
 			// Make sure the minimum debugging level is set and has a correct value
 		if (isset($this->extensionConfiguration['minDebugLevel'])) {
@@ -92,6 +74,34 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			if ($level >= -1 && $level <= 3) {
 				$this->debugMinimumLevel = $level;
 			}
+		}
+	}
+
+	/**
+	 * Sets the proper debug options, given some flag
+	 *
+	 * @param string $flag Debug flag. Expected values are "output", "devlog", "both" or "none"
+	 * @return void
+	 */
+	protected function setDebugOptions($flag) {
+		$this->debug = TRUE;
+		switch ($flag) {
+			case 'output':
+				$this->debugToOutput = TRUE;
+				break;
+			case 'devlog':
+				$this->debugToDevLog = TRUE;
+				break;
+			case 'both':
+				$this->debugToOutput = TRUE;
+				$this->debugToDevLog = TRUE;
+				break;
+
+				// Turn off all debugging if no valid value was entered
+			default:
+				$this->debug = FALSE;
+				$this->debugToOutput = FALSE;
+				$this->debugToDevLog = FALSE;
 		}
 	}
 
@@ -124,6 +134,22 @@ class tx_displaycontroller extends tx_tesseract_picontrollerbase {
 			$this->conf = t3lib_div::array_merge_recursive_overrule($GLOBALS['TSFE']->tmpl->setup['plugin.'][$this->prefixId.'.'], $conf);
 		} else {
 			$this->conf = $conf;
+		}
+			// Load flexform options
+		$this->pi_initPIflexForm();
+		if (is_array($this->cObj->data['pi_flexform']['data'])) {
+			foreach ($this->cObj->data['pi_flexform']['data'] as $sheet => $langData) {
+				foreach ($langData as $fields) {
+					foreach ($fields as $field => $value) {
+						$value = $this->pi_getFFvalue($this->cObj->data['pi_flexform'], $field, $sheet);
+						$this->conf[$field] = $value;
+					}
+				}
+			}
+		}
+			// Check local debug flag (overrides main one)
+		if (!empty($this->conf['debug']) && $this->conf['debug'] != 'none') {
+			$this->setDebugOptions($this->conf['debug']);
 		}
 			// Override standard piVars definition
 		$this->piVars = t3lib_div::_GPmerged($this->prefixId);
