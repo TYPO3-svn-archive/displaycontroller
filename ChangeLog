@@ -1,6 +1,7 @@
-2013-05-2211 Francois Suter (Cobweb)  <typo3@cobweb.ch>
+2013-05-22 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 
 	* Verified compatibility with TYPO3 CMS 6.1, resolves #47457
+	* Added note about preview mechanisms incompatibilities, resolves #48431
 
 2013-04-11 Francois Suter (Cobweb)  <typo3@cobweb.ch>
 

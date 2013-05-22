@@ -241,6 +241,10 @@ Given the following Page TSconfig:
 
 when the "Save and view" button is hit
 the following URL is called up:
+Warning
+This preview mechanism may conflict with other such mechanisms. This happens – for example – with extension "linkhandler". The problem with "linkhandler" is that the same config (mod.tx_linkhandler) is used for both creating the extra tabs and previewing. So you can't disable one while keeping the other. If you encounter this problem, the simplest solution is probably to deactivate the hook registered by "linkhandler". Edit file "ext_localconf.php" and comment out the following lines:
+include_once t3lib_extMgm::extPath($_EXTKEY) . 'service/class.tx_linkhandler_tcemain.php';
+$GLOBALS ['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['processDatamapClass'][] = 'EXT:' . $_EXTKEY . '/service/class.tx_linkhandler_tcemain.php:tx_linkhandler_tcemain';
 Hooks
 There's one hook defined in the Display Controller. It can be used to manipulate filters after their initialization. At this point a filter may either be empty or already have some structure read from the session cache.
 The hook must be registered that way:
@@ -321,6 +325,7 @@ $TYPO3_CONF_VARS['EXTCONF']['realurl']['_DEFAULT']['preVars'] = array(
 );
 
 Note the part in bold.
+
 Troubleshooting
 If anything seems wrong with the speaking URLs, don't forget to check both ends of the process, i.e.:
 if the link is assembled with properly named variables (i.e. tx_displaycontroller[table] and (tx_displaycontroller[showUid])
