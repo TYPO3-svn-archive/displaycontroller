@@ -18,7 +18,6 @@ What does it do?	3
 Screenshots	3
 Questions?	3
 Keeping the developer happy	4
-Credits	4
 Installation	5
 Compatibility	5
 Configuration	6
@@ -34,19 +33,19 @@ Redirection mechanism	11
 Page TSconfig	12
 Hooks	13
 RealURL	13
-Tutorial	15
-Scenario	15
-Preparing for work	15
-Querying the database	15
-Preparing a template for display	16
-Fitting it all together	17
-Improving the display	19
-Next steps	21
-Frequently Asked Questions	22
-Troubleshooting	22
-Known problems	23
-To-Do list	24
-Appendix A – Tutorial answers	25
+Tutorial	16
+Scenario	16
+Preparing for work	16
+Querying the database	16
+Preparing a template for display	17
+Fitting it all together	18
+Improving the display	20
+Next steps	22
+Frequently Asked Questions	23
+Troubleshooting	23
+Known problems	24
+To-Do list	25
+Appendix A – Tutorial answers	26
 
 Introduction
 What does it do?
@@ -58,10 +57,8 @@ An example of the power of the Tesseract Project: a SQL-based query, a HTML temp
 Questions?
 If you have any questions about this extension, you may want to refer to the Tesseract Project web site (http://www.typo3-tesseract.com/) for support and tutorials. You may also ask questions in the TYPO3 English mailing list (typo3.english).
 Keeping the developer happy
-If you like this extension, do not hesitate to rate it. Go the Extension Repository, search for this extension, click on its title to go to the details view, then click on the “Ratings” tab and vote (you need to be logged in). Every new vote keeps the developer ticking. So just do it!
+If you like this extension, do not hesitate to make some buzz about it.
 You may also take a step back and reflect about the beauty of sharing. Think about how much you are benefiting and how much yourself is giving back to the community.
-Credits
-The Display Controller relies on a library called Kint to dump the debug data in the frontend. Kint is developed by Rokas Šleinius. The project is hosted at  Google Code: http://code.google.com/p/kint/
 Installation
 The Display Controller must be installed as part of the Tesseract suite of extensions. It is useless outside of this scope.
 The extension will add a number of fields to the tt_content table and creates a new table used to store the relations between the various Tesseract components.
@@ -72,7 +69,7 @@ As of version 1.4.0, TYPO3 4.5 or more is required.
 Configuration
 Here are the configuration options available after installing the extension:
 Debug: Choose the type of debugging that you want. Debugging to the output will display status messages right before the Display Controller's normal output in the frontend (see screenshot below). Debugging to the Developer's Log will log messages provided you have an extension enabling that log (such as "devlog"). It's also possible to debug to both. Choosing "None" will turn all debugging off. Debugging can also be activated on a content element basis (see User Manual below).
-
+The icons show the status. Rolling over displays the debug title and message (including the key of the extension which registered the message). Clicking on an icon will dump any extra debug data to the JavaScript console.
 Minimum level for debugging: only message with the chosen level of severity or above will be logged for debugging. All others are ignored. This makes for a less verbose output.
 Debug output class: this makes it possible to create a custom class for rendering the debug output. This class will be used instead of tx_displaycontroller_debugger. It should be properly declared in some extension's ext_autoload.php file. It must extend  tx_displaycontroller_debugger and override the render() method.
 

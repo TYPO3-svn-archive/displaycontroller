@@ -23,7 +23,7 @@ $tempColumns = array(
 		'config' => array(
 			'type' => 'group',
 			'internal_type' => 'db',
-			'allowed' => (isset($TCA['tt_content']['columns']['tx_displaycontroller_consumer']['config']['allowed'])) ? $TCA['tt_content']['columns']['tx_displaycontroller_consumer']['config']['allowed'] : '',
+			'allowed' => (isset($GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_consumer']['config']['allowed'])) ? $GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_consumer']['config']['allowed'] : '',
 			'size' => 1,
 			'minitems' => 1,
 			'maxitems' => 1,
@@ -54,7 +54,7 @@ $tempColumns = array(
 		'config' => array (
 			'type' => 'group',
 			'internal_type' => 'db',
-			'allowed' => (isset($TCA['tt_content']['columns']['tx_displaycontroller_provider']['config']['allowed'])) ? $TCA['tt_content']['columns']['tx_displaycontroller_provider']['config']['allowed'] : '',
+			'allowed' => (isset($GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_provider']['config']['allowed'])) ? $GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_provider']['config']['allowed'] : '',
 			'size' => 1,
 			'minitems' => 1,
 			'maxitems' => 1,
@@ -98,7 +98,7 @@ $tempColumns = array(
 		'config' => array (
 			'type' => 'group',
 			'internal_type' => 'db',
-			'allowed' => (isset($TCA['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'])) ? $TCA['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'] : '',
+			'allowed' => (isset($GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'])) ? $GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_datafilter']['config']['allowed'] : '',
 			'size' => 1,
 			'minitems' => 0,
 			'maxitems' => 1,
@@ -140,7 +140,7 @@ $tempColumns = array(
 		'config' => array (
 			'type' => 'group',
 			'internal_type' => 'db',
-			'allowed' => (isset($TCA['tt_content']['columns']['tx_displaycontroller_provider2']['config']['allowed'])) ? $TCA['tt_content']['columns']['tx_displaycontroller_provider2']['config']['allowed'] : '',
+			'allowed' => (isset($GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_provider2']['config']['allowed'])) ? $GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_provider2']['config']['allowed'] : '',
 			'size' => 1,
 			'minitems' => 0,
 			'maxitems' => 1,
@@ -182,7 +182,7 @@ $tempColumns = array(
 		'config' => array (
 			'type' => 'group',
 			'internal_type' => 'db',
-			'allowed' => (isset($TCA['tt_content']['columns']['tx_displaycontroller_datafilter2']['config']['allowed'])) ? $TCA['tt_content']['columns']['tx_displaycontroller_datafilter2']['config']['allowed'] : '',
+			'allowed' => (isset($GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_datafilter2']['config']['allowed'])) ? $GLOBALS['TCA']['tt_content']['columns']['tx_displaycontroller_datafilter2']['config']['allowed'] : '',
 			'size' => 1,
 			'minitems' => 0,
 			'maxitems' => 1,
@@ -235,16 +235,16 @@ $showItem .= '--div--;LLL:EXT:displaycontroller/locallang_db.xml:tabs_options, p
 $showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.appearance, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.frames;frames, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.textlayout;textlayout,';
 $showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.access, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.visibility;visibility, --palette--;LLL:EXT:cms/locallang_ttc.xml:palette.access;access,';
 $showItem .= '--div--;LLL:EXT:cms/locallang_ttc.xml:tabs.extended';
-$TCA['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $showItem;
-$TCA['tt_content']['types'][$_EXTKEY . '_pi2']['showitem'] = $showItem;
+$GLOBALS['TCA']['tt_content']['types'][$_EXTKEY . '_pi1']['showitem'] = $showItem;
+$GLOBALS['TCA']['tt_content']['types'][$_EXTKEY . '_pi2']['showitem'] = $showItem;
 
-$TCA['tt_content']['palettes'][$_EXTKEY . '_1'] = array('showitem' => 'tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_emptyfilter');
-$TCA['tt_content']['palettes'][$_EXTKEY . '_2'] = array('showitem' => 'tx_displaycontroller_datafilter2, tx_displaycontroller_emptyfilter2');
+$GLOBALS['TCA']['tt_content']['palettes'][$_EXTKEY . '_1'] = array('showitem' => 'tx_displaycontroller_filtertype, tx_displaycontroller_datafilter, tx_displaycontroller_emptyfilter');
+$GLOBALS['TCA']['tt_content']['palettes'][$_EXTKEY . '_2'] = array('showitem' => 'tx_displaycontroller_datafilter2, tx_displaycontroller_emptyfilter2');
 
 	// Register icons for content type
 	// Define classes and register icon files with Sprite Manager
-$TCA['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi1'] =  'extensions-displaycontroller-type-controller';
-$TCA['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi2'] =  'extensions-displaycontroller-type-controller';
+$GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi1'] =  'extensions-displaycontroller-type-controller';
+$GLOBALS['TCA']['tt_content']['ctrl']['typeicon_classes'][$_EXTKEY . '_pi2'] =  'extensions-displaycontroller-type-controller';
 
 	// Register icon in the BE and for FE editing (code taken from TemplaVoilà)
 if (TYPO3_MODE == 'BE' ||
@@ -264,13 +264,13 @@ t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_con
 t3lib_extMgm::addPlugin(array('LLL:EXT:displaycontroller/locallang_db.xml:tt_content.CType_pi2', $_EXTKEY . '_pi2', t3lib_extMgm::extRelPath($_EXTKEY) . 'displaycontroller_typeicon.png'), 'CType');
 	// Register wizards for plug-ins
 if (TYPO3_MODE == 'BE') {
-	$TBE_MODULES_EXT['xMOD_db_new_content_el']['addElClasses']['tx_displaycontroller_pi1_wizicon'] = t3lib_extMgm::extPath($_EXTKEY) . 'pi1/class.tx_displaycontroller_pi1_wizicon.php';
-	$TBE_MODULES_EXT['xMOD_db_new_content_el']['addElClasses']['tx_displaycontroller_pi2_wizicon'] = t3lib_extMgm::extPath($_EXTKEY) . 'pi2/class.tx_displaycontroller_pi2_wizicon.php';
+	$GLOBALS['TBE_MODULES_EXT']['xMOD_db_new_content_el']['addElClasses']['tx_displaycontroller_pi1_wizicon'] = t3lib_extMgm::extPath($_EXTKEY) . 'pi1/class.tx_displaycontroller_pi1_wizicon.php';
+	$GLOBALS['TBE_MODULES_EXT']['xMOD_db_new_content_el']['addElClasses']['tx_displaycontroller_pi2_wizicon'] = t3lib_extMgm::extPath($_EXTKEY) . 'pi2/class.tx_displaycontroller_pi2_wizicon.php';
 }
 
 	// Declare static TypoScript
 t3lib_extMgm::addStaticFile($_EXTKEY, 'static/', 'Generic display controller');
 
 	// Register the name of the table linking the controller and its components
-$T3_VAR['EXT']['tesseract']['controller_mm_tables'][] = 'tx_displaycontroller_components_mm';
+$GLOBALS['T3_VAR']['EXT']['tesseract']['controller_mm_tables'][] = 'tx_displaycontroller_components_mm';
 ?>

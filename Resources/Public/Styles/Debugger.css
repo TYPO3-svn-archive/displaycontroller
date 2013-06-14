@@ -1,0 +1,35 @@
+.debug-message {
+	padding: 8px 8px 0 8px;
+	margin: 2px;
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 11px;
+}
+.tx_displaycontroller_debug .message-information,
+.tx_displaycontroller_debug .message-notice,
+.tx_displaycontroller_debug .message-warning,
+.tx_displaycontroller_debug .message-ok,
+.tx_displaycontroller_debug .message-error {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	background-color: #000000;
+}
+
+.tx_displaycontroller_debug .icon-group {
+	position: relative;
+	min-width: 20px;
+	z-index: 1500;
+}
+.tx_displaycontroller_debug p {
+	display: none;
+	position: absolute;
+	left: 4px;
+	top: 15px;
+	background-color: #000000;
+	padding: 4px;
+	border-radius: 3px;
+	color: #ffffff;
+}
+.tx_displaycontroller_debug .icon-group:hover p {
+	display: block;
+}

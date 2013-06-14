@@ -37,21 +37,29 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 	 * @var t3lib_PageRenderer Reference to the current page renderer object
 	 */
 	protected $pageRenderer;
+	/**
+	 * @var bool Flag to control output of unique content
+	 */
 	protected $firstCall = TRUE;
+	/**
+	 * @var string Inline CSS code
+	 */
 	protected $cssCode = '';
+	/**
+	 * @var int Dump variable counter across all calls
+	 */
+	protected $counter = 1;
 
 	public function __construct(t3lib_PageRenderer $pageRenderer) {
 		$this->pageRenderer = $pageRenderer;
-			// Prepare CSS code based on t3skin, if loaded
+		// Prepare CSS code based on t3skin, if loaded
 		if (t3lib_extMgm::isLoaded('t3skin')) {
-			$this->cssCode = t3lib_div::getUrl(t3lib_extMgm::extPath('t3skin') . 'stylesheets/structure/element_message.css');
+			$this->cssCode = t3lib_div::getUrl(t3lib_extMgm::extPath('displaycontroller') . 'Resources/Public/Styles/Debugger.css');
 			$this->cssCode .= t3lib_div::getUrl(t3lib_extMgm::extPath('t3skin') . 'stylesheets/visual/element_message.css');
-				// Adjust path to icons
+			// Adjust path to icons
 			$replacement = t3lib_div::locationHeaderUrl(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'icons');
 			$this->cssCode = str_replace('../../icons', $replacement, $this->cssCode);
 		}
-			// Load the Kint class for dumping debug data
-		require_once(t3lib_extMgm::extPath('displaycontroller', 'lib/kint/Kint.class.php'));
 	}
 
 	/**
@@ -62,22 +70,46 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 	 */
 	public function render(array $messageQueue) {
 		$debugOutput = '';
+		if (count($messageQueue) > 0) {
 			// If this is the first debug call, write the necessary CSS code
-		if ($this->firstCall) {
-			$debugOutput .= '<style>' . $this->cssCode . '</style>';
-			$this->firstCall = FALSE;
-		}
-			// Prepare the output and return it
-		foreach ($messageQueue as $messageData) {
-			$debugOutput .= $messageData['message']->render();
-			if ($messageData['data'] !== NULL) {
-				if (is_array($messageData['data'])) {
-					$debugData = $messageData['data'];
-				} else {
-					$debugData = array($messageData['data']);
-				}
-				$debugOutput .= @Kint::dump($debugData);
+			if ($this->firstCall) {
+				$debugOutput .= '<style>' . $this->cssCode . '</style>';
+				$this->firstCall = FALSE;
 			}
+			// Prepare the output and return it
+			$script = '';
+			$icons = '';
+			foreach ($messageQueue as $messageData) {
+				/** @var \TYPO3\CMS\Core\Messaging\FlashMessage $messageObject */
+				$messageObject = $messageData['message'];
+				// Prepare all the data to dump in JS global variables
+				$dumpVariable = '';
+				if ($messageData['data'] !== NULL) {
+					$dumpVariable = 'dump' . $this->counter;
+					$script .= 'var ' . $dumpVariable . ' = ' . json_encode($messageData['data']) . ';';
+					$this->counter++;
+				}
+				// Choose the log method based on severity
+				switch ($messageObject->getSeverity()) {
+					case 2:
+						$logMethod = 'error';
+						break;
+					case 1:
+						$logMethod = 'warn';
+						break;
+					default:
+						$logMethod = 'log';
+				}
+				// Prepare the output, as a clickable icon and a message
+				$label = '<p><strong>' . $messageObject->getTitle() . '</strong>: ' . $messageObject->getMessage() . '</p>';
+				$debugLink = '
+					<a class="debug-message ' . $messageObject->getClass() . '" onclick="console.' . $logMethod .
+					'(\'' . $messageObject->getTitle() . ': ' . $messageObject->getMessage() . '\'' . ((empty($dumpVariable)) ? '' : ', ' . $dumpVariable) . '); return false;">&nbsp;</a>
+				';
+				$icons .= '<div class="icon-group">' . $debugLink . $label . '</div>';
+			}
+			// Assemble the whole output
+			$debugOutput .= '<div class="tx_displaycontroller_debug"><script type="text/javascript">' . $script . '</script>' . $icons . '</div>';
 		}
 
 		return $debugOutput;
