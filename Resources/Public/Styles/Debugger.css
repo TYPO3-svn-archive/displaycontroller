@@ -4,6 +4,7 @@
 	border-radius: 3px;
 	cursor: pointer;
 	font-size: 11px;
+	text-decoration: none;
 }
 .tx_displaycontroller_debug .message-information,
 .tx_displaycontroller_debug .message-notice,
