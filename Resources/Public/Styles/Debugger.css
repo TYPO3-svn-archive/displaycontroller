@@ -17,6 +17,7 @@
 
 .tx_displaycontroller_debug .icon-group {
 	position: relative;
+	display: inline-block;
 	min-width: 20px;
 	z-index: 1500;
 }

@@ -46,6 +46,10 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 	 */
 	protected $cssCode = '';
 	/**
+	 * @var array Flash message class names
+	 */
+	protected $severityClasses;
+	/**
 	 * @var int Dump variable counter across all calls
 	 */
 	protected $counter = 1;
@@ -59,6 +63,16 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 			// Adjust path to icons
 			$replacement = t3lib_div::locationHeaderUrl(TYPO3_mainDir . t3lib_extMgm::extRelPath('t3skin') . 'icons');
 			$this->cssCode = str_replace('../../icons', $replacement, $this->cssCode);
+		}
+		// Compatibility only for TYPO3 4.5, @see getMessageClass() below
+		if (strpos(TYPO3_version, '4.5') !== FALSE) {
+			$this->severityClasses = array(
+				t3lib_FlashMessage::NOTICE =>  'notice',
+				t3lib_FlashMessage::INFO =>    'information',
+				t3lib_FlashMessage::OK =>      'ok',
+				t3lib_FlashMessage::WARNING => 'warning',
+				t3lib_FlashMessage::ERROR =>   'error',
+			);
 		}
 	}
 
@@ -103,7 +117,7 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 				// Prepare the output, as a clickable icon and a message
 				$label = '<p><strong>' . $messageObject->getTitle() . '</strong>: ' . $messageObject->getMessage() . '</p>';
 				$debugLink = '
-					<a class="debug-message ' . $messageObject->getClass() . '" onclick="console.' . $logMethod .
+					<a class="debug-message ' . $this->getMessageClass($messageObject) . '" onclick="console.' . $logMethod .
 					'(\'' . $messageObject->getTitle() . ': ' . $messageObject->getMessage() . '\'' . ((empty($dumpVariable)) ? '' : ', ' . $dumpVariable) . '); return false;">&nbsp;</a>
 				';
 				$icons .= '<div class="icon-group">' . $debugLink . $label . '</div>';
@@ -113,6 +127,23 @@ class tx_displaycontroller_debugger implements t3lib_Singleton {
 		}
 
 		return $debugOutput;
+	}
+
+	/**
+	 * Returns the CSS class name corresponding to the message severity.
+	 *
+	 * This class is a compatibility layer for TYPO3 4.5, where t3lib_FlashMessage didn't yet have
+	 * a getClass() method.
+	 *
+	 * @param t3lib_FlashMessage $message Message object
+	 * @return string CSS class name corresponding to the severity
+	 */
+	protected function getMessageClass($message) {
+		if (strpos(TYPO3_version, '4.5') !== FALSE) {
+			return 'message-' . $this->severityClasses[$message->getSeverity()];
+		} else {
+			return $message->getClass();
+		}
 	}
 }
 
