@@ -22,8 +22,6 @@
 *  This copyright notice MUST APPEAR in all copies of the script!
 ***************************************************************/
 
-require_once(t3lib_extMgm::extPath('tesseract', 'base/class.tx_tesseract_picontrollerbase.php'));
-
 /**
  * Plugin 'Display Controller (cached)' for the 'displaycontroller' extension.
  *
